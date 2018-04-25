@@ -1,0 +1,71 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.24.2.0
+Copyright (C) 2017 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information:   ,  , LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.24.1
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 5 (build 528)
+Assembler:       Armasm.exe V5.06 update 5 (build 528)
+Linker/Locator:  ArmLink.exe V5.06 update 5 (build 528)
+Library Manager: ArmAr.exe V5.06 update 5 (build 528)
+Hex Converter:   FromElf.exe V5.06 update 5 (build 528)
+CPU DLL:         SARMCM3.DLL V5.24.1
+Dialog DLL:      DCM.DLL V1.16.0.0
+Target DLL:      lmidk-agdi.dll V???
+Dialog DLL:      TCM.DLL V1.32.0.0
+ 
+<h2>Project:</h2>
+C:\Users\hesha\Desktop\New folder\Power Window\Power Window.uvproj
+Project File Date:  04/25/2018
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Build target 'freertos_demo'
+compiling heap_2.c...
+FreeRTOS\Source\portable\MemMang\heap_2.c(86): error:  #5: cannot open source input file "FreeRTOS.h": No such file or directory
+  #include "FreeRTOS.h"
+FreeRTOS\Source\portable\MemMang\heap_2.c: 0 warnings, 1 error
+compiling freertos_demo.c...
+FreeRTOS\Source\include\portable.h(94): error:  #5: cannot open source input file "portmacro.h": No such file or directory
+  	#include "portmacro.h"
+freertos_demo.c: 0 warnings, 1 error
+compiling buttons.c...
+drivers\buttons.c(37): error:  #5: cannot open source input file "FreeRTOS.h": No such file or directory
+  #include "FreeRTOS.h"//for proj
+drivers\buttons.c: 0 warnings, 1 error
+compiling led_task.c...
+led_task.c(36): error:  #5: cannot open source input file "FreeRTOS.h": No such file or directory
+  #include "FreeRTOS.h"
+led_task.c: 0 warnings, 1 error
+compiling list.c...
+FreeRTOS\Source\list.c(72): error:  #5: cannot open source input file "FreeRTOS.h": No such file or directory
+  #include "FreeRTOS.h"
+FreeRTOS\Source\list.c: 0 warnings, 1 error
+compiling port.c...
+FreeRTOS\Source\portable\RVDS\ARM_CM4F\port.c(75): error:  #5: cannot open source input file "FreeRTOS.h": No such file or directory
+  #include "FreeRTOS.h"
+FreeRTOS\Source\portable\RVDS\ARM_CM4F\port.c: 0 warnings, 1 error
+compiling queue.c...
+FreeRTOS\Source\queue.c(78): error:  #5: cannot open source input file "FreeRTOS.h": No such file or directory
+  #include "FreeRTOS.h"
+FreeRTOS\Source\queue.c: 0 warnings, 1 error
+compiling switch_task.c...
+FreeRTOS\Source\include\portable.h(94): error:  #5: cannot open source input file "portmacro.h": No such file or directory
+  	#include "portmacro.h"
+switch_task.c: 0 warnings, 1 error
+compiling tasks.c...
+.\FreeRTOS\Source\include\portable.h(94): error:  #5: cannot open source input file "portmacro.h": No such file or directory
+  	#include "portmacro.h"
+FreeRTOS\Source\tasks.c: 0 warnings, 1 error
+".\rvmdk\freertos_demo.axf" - 9 Error(s), 0 Warning(s).
+Target not created.
+Build Time Elapsed:  00:00:01
+</pre>
+</body>
+</html>
