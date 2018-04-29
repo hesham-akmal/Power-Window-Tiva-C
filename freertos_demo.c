@@ -82,7 +82,6 @@
 // The mutex that protects concurrent access of UART from multiple tasks.
 //
 //*****************************************************************************
-xSemaphoreHandle g_pUARTSemaphore;
 
 //*****************************************************************************
 //
@@ -123,6 +122,7 @@ vApplicationStackOverflowHook(xTaskHandle *pxTask, char *pcTaskName)
 void
 ConfigureUART(void)
 {
+
     //
     // Enable the GPIO Peripheral used by the UART.
     //
@@ -174,11 +174,6 @@ main(void)
     // Print demo introduction.
     //
     UARTprintf("\n\nWelcome to the EK-TM4C123GXL FreeRTOS Demo!\n");
-
-    //
-    // Create a mutex to guard the UART.
-    //
-    g_pUARTSemaphore = xSemaphoreCreateMutex();
 
     //
     // Create the LED task.

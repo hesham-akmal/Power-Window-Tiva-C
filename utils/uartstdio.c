@@ -37,6 +37,12 @@
 #include "driverlib/uart.h"
 #include "utils/uartstdio.h"
 
+//Semaphore for UART
+#include "FreeRTOS.h"
+#include "semphr.h"
+xSemaphoreHandle g_pUARTSemaphore;
+///////////////////////
+
 //*****************************************************************************
 //
 //! \addtogroup uartstdio_api
@@ -399,6 +405,11 @@ UARTStdioConfig(uint32_t ui32PortNum, uint32_t ui32Baud, uint32_t ui32SrcClock)
     MAP_UARTIntEnable(g_ui32Base, UART_INT_RX | UART_INT_RT);
     MAP_IntEnable(g_ui32UARTInt[ui32PortNum]);
 #endif
+
+		//
+		// Create a mutex to guard the UART.
+    //
+    g_pUARTSemaphore = xSemaphoreCreateMutex();
 
     //
     // Enable the UART operation.
@@ -1288,10 +1299,13 @@ convert:
 //! \return None.
 //
 //*****************************************************************************
+
 void
 UARTprintf(const char *pcString, ...)
 {
     va_list vaArgP;
+
+		xSemaphoreTake(g_pUARTSemaphore, portMAX_DELAY);
 
     //
     // Start the varargs processing.
@@ -1304,6 +1318,9 @@ UARTprintf(const char *pcString, ...)
     // We're finished with the varargs now.
     //
     va_end(vaArgP);
+		
+		
+    xSemaphoreGive(g_pUARTSemaphore);
 }
 
 //*****************************************************************************

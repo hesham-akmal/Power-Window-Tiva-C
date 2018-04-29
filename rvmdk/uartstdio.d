@@ -13,3 +13,13 @@
 .\rvmdk\uartstdio.o: .\driverlib/sysctl.h
 .\rvmdk\uartstdio.o: .\driverlib/uart.h
 .\rvmdk\uartstdio.o: .\utils/uartstdio.h
+.\rvmdk\uartstdio.o: FreeRTOS\Source\include\FreeRTOS.h
+.\rvmdk\uartstdio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\rvmdk\uartstdio.o: .\FreeRTOSConfig.h
+.\rvmdk\uartstdio.o: FreeRTOS\Source\include\projdefs.h
+.\rvmdk\uartstdio.o: FreeRTOS\Source\include\portable.h
+.\rvmdk\uartstdio.o: FreeRTOS\Source\include\deprecated_definitions.h
+.\rvmdk\uartstdio.o: FreeRTOS\Source\portable\RVDS\ARM_CM4F\portmacro.h
+.\rvmdk\uartstdio.o: FreeRTOS\Source\include\mpu_wrappers.h
+.\rvmdk\uartstdio.o: FreeRTOS\Source\include\semphr.h
+.\rvmdk\uartstdio.o: FreeRTOS\Source\include\queue.h

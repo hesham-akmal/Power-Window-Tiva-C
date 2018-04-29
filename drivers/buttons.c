@@ -99,7 +99,6 @@ static uint8_t g_ui8ButtonStates = ALL_BUTTONS;
 void ButtonPressed(void);
 
 extern xQueueHandle g_pLEDQueue;
-extern xSemaphoreHandle g_pUARTSemaphore;
 
 uint8_t
 ButtonsPoll(uint8_t *pui8Delta, uint8_t *pui8RawState)

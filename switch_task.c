@@ -48,7 +48,6 @@
 #define SWITCHTASKSTACKSIZE        128         // Stack size in words
 
 extern xQueueHandle g_pLEDQueue;
-extern xSemaphoreHandle g_pUARTSemaphore;
 xSemaphoreHandle xButtonPressedSemaphore;
 uint8_t button_pressed = 0; //1 for right, 2 for left
 
@@ -77,11 +76,10 @@ SwitchTask(void *pvParameters)
                     ui8Message = LEFT_BUTTON;
 
                     //
-                    // Guard UART from concurrent access.
+                    // No need to worry about take/give uart semaphore.
+										// UART semaphore now implemented inside UART printf.
                     //
-                    xSemaphoreTake(g_pUARTSemaphore, portMAX_DELAY);
                     UARTprintf("Left Button is pressed.\n");
-                    xSemaphoreGive(g_pUARTSemaphore);
                 }
 								else if ( button_pressed == 1 )
                 {
@@ -90,9 +88,7 @@ SwitchTask(void *pvParameters)
                     //
                     // Guard UART from concurrent access.
                     //
-                    xSemaphoreTake(g_pUARTSemaphore, portMAX_DELAY);
                     UARTprintf("Right Button is pressed.\n");
-                    xSemaphoreGive(g_pUARTSemaphore);
                 }
 								
 								button_pressed = 0; //reset

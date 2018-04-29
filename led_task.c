@@ -106,7 +106,7 @@ LEDTask(void *pvParameters)
         //
         // Read the next message, if available on queue.
         //
-        if(xQueueReceive(g_pLEDQueue, &i8Message, 0) == pdPASS)
+        /*if(xQueueReceive(g_pLEDQueue, &i8Message, 0) == pdPASS)
         {
             //
             // If left button, update to next LED.
@@ -137,12 +137,9 @@ LEDTask(void *pvParameters)
                 RGBColorSet(g_pui32Colors);
 
                 //
-                // Guard UART from concurrent access. Print the currently
                 // blinking LED.
                 //
-                xSemaphoreTake(g_pUARTSemaphore, portMAX_DELAY);
                 UARTprintf("Led %d is blinking. [R, G, B]\n", g_ui8ColorsIndx);
-                xSemaphoreGive(g_pUARTSemaphore);
             }
 
             //
@@ -157,13 +154,10 @@ LEDTask(void *pvParameters)
                 }
 
                 //
-                // Guard UART from concurrent access. Print the currently
                 // blinking frequency.
                 //
-                xSemaphoreTake(g_pUARTSemaphore, portMAX_DELAY);
                 UARTprintf("Led blinking frequency is %d ms.\n",
                            (ui32LEDToggleDelay * 2));
-                xSemaphoreGive(g_pUARTSemaphore);
             }
         }
 
@@ -181,6 +175,37 @@ LEDTask(void *pvParameters)
         // Turn off the LED.
         //
         RGBDisable();
+				*/
+				
+			if(xQueueReceive(g_pLEDQueue, &i8Message, 0) == pdPASS)
+        {
+				
+				if(i8Message == LEFT_BUTTON)
+            {
+						
+    //
+    // Turn on the Green LED
+    //
+						g_ui8ColorsIndx = 0;
+						g_pui32Colors[g_ui8ColorsIndx] = 0x8000;
+						RGBColorSet(g_pui32Colors);
+						RGBEnable();
+						
+						}else if(i8Message == RIGHT_BUTTON)
+            {
+						
+						RGBDisable();
+						
+						}
+						
+				}		
+				
+				
+				
+				
+				
+				
+				
 
         //
         // Wait for the required amount of time.
@@ -202,19 +227,6 @@ LEDTaskInit(void)
     //
     RGBInit(1);
     RGBIntensitySet(0.3f);
-
-    //
-    // Turn on the Green LED
-    //
-    g_ui8ColorsIndx = 0;
-    g_pui32Colors[g_ui8ColorsIndx] = 0x8000;
-    RGBColorSet(g_pui32Colors);
-
-    //
-    // Print the current loggling LED and frequency.
-    //
-    UARTprintf("\nLed %d is blinking. [R, G, B]\n", g_ui8ColorsIndx);
-    UARTprintf("Led blinking frequency is %d ms.\n", (LED_TOGGLE_DELAY * 2));
 
     //
     // Create a queue for sending messages to the LED task.
