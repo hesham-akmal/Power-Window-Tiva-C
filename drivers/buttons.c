@@ -56,113 +56,56 @@ extern xSemaphoreHandle xButtonPressedSemaphore;
 //
 //*****************************************************************************
 
-//*****************************************************************************
-//
-// Holds the current, debounced state of each button.  A 0 in a bit indicates
-// that that button is currently pressed, otherwise it is released.
-// We assume that we start with all the buttons released (though if one is
-// pressed when the application starts, this will be detected).
-//
-//*****************************************************************************
-static uint8_t g_ui8ButtonStates = ALL_BUTTONS;
-
-//*****************************************************************************
-//
-//! Polls the current state of the buttons and determines which have changed.
-//!
-//! \param pui8Delta points to a character that will be written to indicate
-//! which button states changed since the last time this function was called.
-//! This value is derived from the debounced state of the buttons.
-//! \param pui8RawState points to a location where the raw button state will
-//! be stored.
-//!
-//! This function should be called periodically by the application to poll the
-//! pushbuttons.  It determines both the current debounced state of the buttons
-//! and also which buttons have changed state since the last time the function
-//! was called.
-//!
-//! In order for button debouncing to work properly, this function should be
-//! caled at a regular interval, even if the state of the buttons is not needed
-//! that often.
-//!
-//! If button debouncing is not required, the the caller can pass a pointer
-//! for the \e pui8RawState parameter in order to get the raw state of the
-//! buttons.  The value returned in \e pui8RawState will be a bit mask where
-//! a 1 indicates the buttons is pressed.
-//!
-//! \return Returns the current debounced state of the buttons where a 1 in the
-//! button ID's position indicates that the button is pressed and a 0
-//! indicates that it is released.
-//
-//*****************************************************************************
-
-void ButtonPressed(void);
-
 extern xQueueHandle g_pLEDQueue;
 
-uint8_t
-ButtonsPoll(uint8_t *pui8Delta, uint8_t *pui8RawState)
-{
-    uint32_t ui32Delta;
-    uint32_t ui32Data;
-    static uint8_t ui8SwitchClockA = 0;
-    static uint8_t ui8SwitchClockB = 0;
+bool PIN_0_Pressed = false;
+bool PIN_4_Pressed = false;
 
-    //
-    // Read the raw state of the push buttons.  Save the raw state
-    // (inverting the bit sense) if the caller supplied storage for the
-    // raw value.
-    //
-    ui32Data = (ROM_GPIOPinRead(BUTTONS_GPIO_BASE, ALL_BUTTONS));
-    if(pui8RawState)
-    {
-        *pui8RawState = (uint8_t)~ui32Data;
-    }
+void onButtonInt(void) {
 
-    //
-    // Determine the switches that are at a different state than the debounced
-    // state.
-    //
-    ui32Delta = ui32Data ^ g_ui8ButtonStates;
+		//Get which pin interrupted
+		uint8_t PIN_NUM = GPIOIntStatus(GPIO_PORTF_BASE, false);
 
-    //
-    // Increment the clocks by one.
-    //
-    ui8SwitchClockA ^= ui8SwitchClockB;
-    ui8SwitchClockB = ~ui8SwitchClockB; 
-
-    //
-    // Reset the clocks corresponding to switches that have not changed state.
-    //
-    ui8SwitchClockA &= ui32Delta;
-    ui8SwitchClockB &= ui32Delta;
-
-    //
-    // Get the new debounced switch state.
-    //
-    g_ui8ButtonStates &= ui8SwitchClockA | ui8SwitchClockB;
-    g_ui8ButtonStates |= (~(ui8SwitchClockA | ui8SwitchClockB)) & ui32Data;
-
-    //
-    // Determine the switches that just changed debounced state.
-    //
-    ui32Delta ^= (ui8SwitchClockA | ui8SwitchClockB);
-
-    //
-    // Store the bit mask for the buttons that have changed for return to
-    // caller.
-    //
-    if(pui8Delta)
-    {
-        *pui8Delta = (uint8_t)ui32Delta;
-    }
-
-    //
-    // Return the debounced buttons states to the caller.  Invert the bit
-    // sense so that a '1' indicates the button is pressed, which is a
-    // sensible way to interpret the return value.
-    //
-    return(~g_ui8ButtonStates);
+		if (PIN_NUM & GPIO_PIN_0) //PF0 btn CLICK //if PIN_NUM == GPIO_PIN_0
+		{
+			if (!PIN_0_Pressed) //If btn not held down
+			{
+				 UARTprintf("PF0 Down \n");
+				 //turn on led
+				 GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3 , 2);
+				 //turn on motor
+				 GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_2, GPIO_PIN_2);
+			}
+			else // btn was held down
+			{
+					UARTprintf("PF0 Up \n");
+					//turn off led
+					GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, 0 );
+					//turn off motor?
+					GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_2, 0);
+      }
+				PIN_0_Pressed = !PIN_0_Pressed; //flip pressed bool 
+				GPIOIntClear(GPIO_PORTF_BASE, PIN_NUM);  // Clear interrupt flag
+		}
+		
+		else if (PIN_NUM & GPIO_PIN_4) //PF4 btn CLICK
+		{
+			if (!PIN_4_Pressed)
+			{
+				 UARTprintf("PF4 Down \n");
+				 //turn on led
+				 GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3 , 2);
+			}
+			else
+			{
+				 UARTprintf("PF4 Up \n");
+				 //turn off led
+				 GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, 0 );
+			}
+				 PIN_4_Pressed = !PIN_4_Pressed;
+				 GPIOIntClear(GPIO_PORTF_BASE, PIN_NUM);  // Clear interrupt flag
+		}
+		
 }
 
 //*****************************************************************************
@@ -177,6 +120,7 @@ ButtonsPoll(uint8_t *pui8Delta, uint8_t *pui8RawState)
 //! \return None.
 //
 //*****************************************************************************
+
 void
 ButtonsInit(void)
 {
@@ -201,52 +145,26 @@ ButtonsInit(void)
     MAP_GPIOPadConfigSet(BUTTONS_GPIO_BASE, ALL_BUTTONS,
                          GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
 
-    //
-    // Initialize the debounced button state with the current state read from
-    // the GPIO bank.
-    //
-    g_ui8ButtonStates = ROM_GPIOPinRead(BUTTONS_GPIO_BASE, ALL_BUTTONS);
-		
-		
 		//DISABLE INTERRUPTS AT INIT
 		GPIOIntDisable(GPIO_PORTF_BASE, GPIO_PIN_0);
 		GPIOIntDisable(GPIO_PORTF_BASE, GPIO_PIN_4);
-		// To set interrupts on press only (not include release)
-    GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_0, GPIO_FALLING_EDGE);
-		GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_4, GPIO_FALLING_EDGE);
+		// To set interrupts 
+    GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_0, GPIO_BOTH_EDGES);
+		GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_4, GPIO_BOTH_EDGES);
 		// ENABLE INTERRUPTS
 		GPIOIntEnable(GPIO_PORTF_BASE, GPIO_PIN_0);
 		GPIOIntEnable(GPIO_PORTF_BASE, GPIO_PIN_4);
-		//Set Handler to ButtonPressed method
-		GPIOIntRegister(GPIO_PORTF_BASE, ButtonPressed);
-}
 
-
-void ButtonPressed(void){
-
-	uint8_t x = GPIOIntStatus(GPIO_PORTF_BASE, false);
-
-	//Clear interrupts to avoid being stuck in this method
-	GPIOIntClear(GPIO_PORTF_BASE, GPIO_PIN_0);
-	GPIOIntClear(GPIO_PORTF_BASE, GPIO_PIN_4);
+		//Set Handler to onButtonInt method
+		GPIOIntRegister(GPIO_PORTF_BASE, onButtonInt);
 		
-		if ( x & GPIO_PIN_4) {
-		button_pressed = 2;  //"button_pressed" at switch_task.c
-		}
-    else if (x & GPIO_PIN_0)  {
-		button_pressed = 1;
-		}
-		else {
-		return;
-		}
+		//enable led for testing
+		GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3);
 		
- 		//Unblock SwitchTask
-		portBASE_TYPE xHigherPTW = pdFALSE;
-		xSemaphoreGiveFromISR(xButtonPressedSemaphore , &xHigherPTW);
-		portEND_SWITCHING_ISR(xHigherPTW);
+		//enable motor pins
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+		GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_2);
 }
-
-
 //*****************************************************************************
 //
 // Close the Doxygen group.

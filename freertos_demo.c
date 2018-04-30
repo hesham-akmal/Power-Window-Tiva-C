@@ -173,14 +173,13 @@ main(void)
     //
     // Print demo introduction.
     //
-    UARTprintf("\n\nWelcome to the EK-TM4C123GXL FreeRTOS Demo!\n");
-
+    UARTprintf("\n\nWelcome to our Power Window project!\n");
+		
     //
     // Create the LED task.
     //
     if(LEDTaskInit() != 0)
     {
-
         while(1)
         {
         }
@@ -191,7 +190,6 @@ main(void)
     //
     if(SwitchTaskInit() != 0)
     {
-
         while(1)
         {
         }

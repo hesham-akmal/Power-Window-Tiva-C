@@ -1,5 +1,5 @@
 Dependencies for Project 'Power Window', Target 'freertos_demo': (DO NOT MODIFY !)
-F (drivers\buttons.c)(0x5AE5C817)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I FreeRTOS\Source\portable\RVDS\ARM_CM4F -I FreeRTOS -I FreeRTOS\Source\include -I .\ --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_TM4C123GH6PM -DTARGET_IS_TM4C123_RB1-o .\rvmdk\buttons.o --omf_browse .\rvmdk\buttons.crf --depend .\rvmdk\buttons.d)
+F (drivers\buttons.c)(0x5AE79F9F)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I FreeRTOS\Source\portable\RVDS\ARM_CM4F -I FreeRTOS -I FreeRTOS\Source\include -I .\ --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_TM4C123GH6PM -DTARGET_IS_TM4C123_RB1-o .\rvmdk\buttons.o --omf_browse .\rvmdk\buttons.crf --depend .\rvmdk\buttons.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x588BD7A4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BD7A4)
 I (.\inc/hw_types.h)(0x5A9455F8)
@@ -28,7 +28,7 @@ I (FreeRTOS\Source\include\task.h)(0x5A945602)
 I (FreeRTOS\Source\include\list.h)(0x5A945602)
 I (.\utils/uartstdio.h)(0x5A945619)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x588BD7A4)
-F (.\freertos_demo.c)(0x5AE5C8A2)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I FreeRTOS\Source\portable\RVDS\ARM_CM4F -I FreeRTOS -I FreeRTOS\Source\include -I .\ --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_TM4C123GH6PM -DTARGET_IS_TM4C123_RB1-o .\rvmdk\freertos_demo.o --omf_browse .\rvmdk\freertos_demo.crf --depend .\rvmdk\freertos_demo.d)
+F (.\freertos_demo.c)(0x5AE76661)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I FreeRTOS\Source\portable\RVDS\ARM_CM4F -I FreeRTOS -I FreeRTOS\Source\include -I .\ --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_TM4C123GH6PM -DTARGET_IS_TM4C123_RB1-o .\rvmdk\freertos_demo.o --omf_browse .\rvmdk\freertos_demo.crf --depend .\rvmdk\freertos_demo.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x588BD7A4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BD7A4)
 I (inc/hw_memmap.h)(0x5A9455F8)
@@ -147,7 +147,7 @@ I (.\driverlib/gpio.h)(0x5A9455A9)
 I (.\driverlib/interrupt.h)(0x5A9455A9)
 I (drivers\rgb.h)(0x5A9455CC)
 F (.\startup_rvmdk.S)(0x5A9455CD)(--cpu Cortex-M4.fp --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1"-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary--pd "__UVISION_VERSION SETA 524"-o .\rvmdk\startup_rvmdk.o --depend .\rvmdk\startup_rvmdk.d)
-F (.\switch_task.c)(0x5AE5C86B)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I FreeRTOS\Source\portable\RVDS\ARM_CM4F -I FreeRTOS -I FreeRTOS\Source\include -I .\ --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_TM4C123GH6PM -DTARGET_IS_TM4C123_RB1-o .\rvmdk\switch_task.o --omf_browse .\rvmdk\switch_task.crf --depend .\rvmdk\switch_task.d)
+F (.\switch_task.c)(0x5AE7494C)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I FreeRTOS\Source\portable\RVDS\ARM_CM4F -I FreeRTOS -I FreeRTOS\Source\include -I .\ --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_TM4C123GH6PM -DTARGET_IS_TM4C123_RB1-o .\rvmdk\switch_task.o --omf_browse .\rvmdk\switch_task.crf --depend .\rvmdk\switch_task.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x588BD7A4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BD7A4)
 I (inc/hw_memmap.h)(0x5A9455F8)
@@ -190,7 +190,7 @@ I (FreeRTOS\Source\include\task.h)(0x5A945602)
 I (FreeRTOS\Source\include\list.h)(0x5A945602)
 I (FreeRTOS\Source\include\timers.h)(0x5A945602)
 I (FreeRTOS\Source\include\StackMacros.h)(0x5A945602)
-F (utils\uartstdio.c)(0x5AE5C8F7)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I FreeRTOS\Source\portable\RVDS\ARM_CM4F -I FreeRTOS -I FreeRTOS\Source\include -I .\ --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_TM4C123GH6PM -DTARGET_IS_TM4C123_RB1-o .\rvmdk\uartstdio.o --omf_browse .\rvmdk\uartstdio.crf --depend .\rvmdk\uartstdio.d)
+F (utils\uartstdio.c)(0x5AE75FE8)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I FreeRTOS\Source\portable\RVDS\ARM_CM4F -I FreeRTOS -I FreeRTOS\Source\include -I .\ --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_TM4C123GH6PM -DTARGET_IS_TM4C123_RB1-o .\rvmdk\uartstdio.o --omf_browse .\rvmdk\uartstdio.crf --depend .\rvmdk\uartstdio.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x588BD7A4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BD7A4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x588BD7A4)
