@@ -27,3 +27,4 @@
 .\rvmdk\buttons.o: FreeRTOS\Source\include\list.h
 .\rvmdk\buttons.o: .\utils/uartstdio.h
 .\rvmdk\buttons.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\rvmdk\buttons.o: .\driverlib/pwm.h
