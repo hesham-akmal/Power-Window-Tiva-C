@@ -1,0 +1,2 @@
+void LCD_INIT(void);
+void LCD_print_String(char * a);

@@ -10,6 +10,9 @@
 .\rvmdk\buttons.o: .\driverlib/pin_map.h
 .\rvmdk\buttons.o: .\driverlib/gpio.h
 .\rvmdk\buttons.o: .\drivers/buttons.h
+.\rvmdk\buttons.o: .\utils/uartstdio.h
+.\rvmdk\buttons.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\rvmdk\buttons.o: .\PORTS.h
 .\rvmdk\buttons.o: FreeRTOS\Source\include\FreeRTOS.h
 .\rvmdk\buttons.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\rvmdk\buttons.o: .\FreeRTOSConfig.h
@@ -18,13 +21,7 @@
 .\rvmdk\buttons.o: FreeRTOS\Source\include\deprecated_definitions.h
 .\rvmdk\buttons.o: FreeRTOS\Source\portable\RVDS\ARM_CM4F\portmacro.h
 .\rvmdk\buttons.o: FreeRTOS\Source\include\mpu_wrappers.h
+.\rvmdk\buttons.o: FreeRTOS\Source\include\queue.h
+.\rvmdk\buttons.o: FreeRTOS\Source\include\semphr.h
 .\rvmdk\buttons.o: .\priorities.h
 .\rvmdk\buttons.o: .\driverlib/interrupt.h
-.\rvmdk\buttons.o: .\switch_task.h
-.\rvmdk\buttons.o: FreeRTOS\Source\include\semphr.h
-.\rvmdk\buttons.o: FreeRTOS\Source\include\queue.h
-.\rvmdk\buttons.o: FreeRTOS\Source\include\task.h
-.\rvmdk\buttons.o: FreeRTOS\Source\include\list.h
-.\rvmdk\buttons.o: .\utils/uartstdio.h
-.\rvmdk\buttons.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
-.\rvmdk\buttons.o: .\driverlib/pwm.h

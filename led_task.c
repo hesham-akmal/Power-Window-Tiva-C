@@ -199,13 +199,6 @@ LEDTask(void *pvParameters)
 						}
 						
 				}		
-				
-				
-				
-				
-				
-				
-				
 
         //
         // Wait for the required amount of time.

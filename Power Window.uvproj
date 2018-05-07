@@ -420,16 +420,6 @@
           <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>buttons.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\buttons.c</FilePath>
-            </File>
-            <File>
-              <FileName>freertos_demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\freertos_demo.c</FilePath>
-            </File>
-            <File>
               <FileName>heap_2.c</FileName>
               <FileType>1</FileType>
               <FilePath>FreeRTOS\Source\portable\MemMang\heap_2.c</FilePath>
@@ -465,11 +455,6 @@
               <FilePath>.\startup_rvmdk.S</FilePath>
             </File>
             <File>
-              <FileName>switch_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\switch_task.c</FilePath>
-            </File>
-            <File>
               <FileName>tasks.c</FileName>
               <FileType>1</FileType>
               <FilePath>FreeRTOS\Source\tasks.c</FilePath>
@@ -483,6 +468,36 @@
               <FileName>ustdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>utils\ustdlib.c</FilePath>
+            </File>
+            <File>
+              <FileName>freertos_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\freertos_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>switch_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\switch_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>buttons.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\buttons.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LCD.h</FilePath>
+            </File>
+            <File>
+              <FileName>PORTS.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\PORTS.h</FilePath>
             </File>
           </Files>
         </Group>

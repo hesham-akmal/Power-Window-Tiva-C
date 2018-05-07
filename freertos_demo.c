@@ -38,6 +38,7 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+#include "LCD.h"
 
 //*****************************************************************************
 //
@@ -169,6 +170,11 @@ main(void)
     // Initialize the UART and configure it for 115,200, 8-N-1 operation.
     //
     ConfigureUART();
+		
+		//
+    // Initialize the LCD
+    //
+    LCD_INIT();
 
     //
     // Print demo introduction.
@@ -178,12 +184,12 @@ main(void)
     //
     // Create the LED task.
     //
-    if(LEDTaskInit() != 0)
+    /*if(LEDTaskInit() != 0)
     {
         while(1)
         {
         }
-    }
+    }*/
 
     //
     // Create the switch task.

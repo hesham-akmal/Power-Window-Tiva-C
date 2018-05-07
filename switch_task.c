@@ -4,23 +4,24 @@
 //
 // Copyright (c) 2012-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 2.1.4.178 of the EK-TM4C123GXL Firmware Package.
 //
 //*****************************************************************************
+
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -39,75 +40,148 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+#include "PORTS.h"
+#include "LCD.h"
+
 
 //*****************************************************************************
 //
 // The stack size for the display task.
 //
 //*****************************************************************************
-#define SWITCHTASKSTACKSIZE        128         // Stack size in words
+#define SWITCHTASKSTACKSIZE 128 // Stack size in words
 
-extern xQueueHandle g_pLEDQueue;
 xSemaphoreHandle xButtonPressedSemaphore;
-uint8_t button_pressed = 0; //1 for right, 2 for left
+
+//From buttons.c //////////////////////
+extern uint8_t INT_PIN_NUM;
+extern bool bCentralBtnDebounceReady;
+///////////////////////////////////////
+
+volatile bool bCentralBtnDownPressed;
+volatile bool bCentralBtnUpPressed;
+
+//
+
+void RedLEDOn(void){
+GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
+}
+
+void RedLEDOff(void){
+GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 0);
+}
+
+//
+
+void Force_Window_Up(void) {
+		//Set H Bridge in1 and in2 and EN
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin1, MotorPin1);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin2, 0);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN, MotorPinEN);
+}
+void Force_Window_Down(void) {
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin1, 0);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin2, MotorPin2);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN, MotorPinEN);
+}
+void Force_Window_Stop(void) {
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2, 0);
+}
+
+//
+
+void CentralBtnDownPress(void) {
+    UARTprintf("CentralBtnDownPress\n");
+
+    RedLEDOn();
+
+    Force_Window_Up();
+
+    LCD_print_string("Window opening..");
+}
+
+void CentralBtnDownRelease(void) {
+    UARTprintf("CentralBtnDownRelease\n");
+
+    RedLEDOff();
+
+    Force_Window_Stop();
+
+    LCD_print_string("Window neutral");
+}
+
+//
+
+void CentralBtnUpPress(void) {
+    UARTprintf("CentralBtnUpPress\n");
+
+    RedLEDOn();
+
+    Force_Window_Down();
+
+    LCD_print_string("Window closing..");
+}
+
+void CentralBtnUpRelease(void) {
+    UARTprintf("CentralBtnUpRelease\n");
+
+    RedLEDOff();
+
+    Force_Window_Stop();
+
+    LCD_print_string("Window neutral");
+}
+
 
 //*****************************************************************************
 //
-// This task reads the buttons' state and passes this information to LEDTask.
+// This task handles central button behaviour
 //
 //*****************************************************************************
 static void
-SwitchTask(void *pvParameters)
-{
-    uint8_t ui8Message;
+SwitchTask(void * pvParameters) {
+    
+    xSemaphoreTake(xButtonPressedSemaphore, 0);
 
-		xSemaphoreTake(xButtonPressedSemaphore, 0);
-			
     //
     // Loop forever.
     //
-    while(1)
+    while (1)
     {
-			//Block till button interrupt gives semaphore back
-		  xSemaphoreTake(xButtonPressedSemaphore, portMAX_DELAY);
-		
-								if( button_pressed == 2 )
-                {
-                    ui8Message = LEFT_BUTTON;
+        //Block till button interrupt gives semaphore back
+        xSemaphoreTake(xButtonPressedSemaphore, portMAX_DELAY);
 
-                    //
-                    // No need to worry about take/give uart semaphore.
-										// UART semaphore now implemented inside UART printf.
-                    //
-                    UARTprintf("Left Button is pressed.\n");
-                }
-								else if ( button_pressed == 1 )
-                {
-                    ui8Message = RIGHT_BUTTON;
+            if (INT_PIN_NUM & CentralBtnDownPin) //if INT_PIN_NUM == CentralBtnDownPin
+            {
 
-                    //
-                    // Guard UART from concurrent access.
-                    //
-                    UARTprintf("Right Button is pressed.\n");
-                }
-								
-								button_pressed = 0; //reset
-								
-                //
-                // Pass the value of the button pressed to LEDTask.
-                //
-                if(xQueueSend(g_pLEDQueue, &ui8Message, portMAX_DELAY) !=
-                   pdPASS)
+                if (!bCentralBtnDownPressed) //If btn was not held down, therefore it's pressed
                 {
-                    //
-                    // Error. The queue should never be full. If so print the
-                    // error message on UART and wait for ever.
-                    //
-                    UARTprintf("\nQueue full. This should never happen.\n");
-                    while(1)
-                    {
-                    }
+                    CentralBtnDownPress();
+                } else // btn was already held down
+                {
+                    CentralBtnDownRelease();
                 }
+
+                bCentralBtnDownPressed = !bCentralBtnDownPressed; //flip pressed bool
+
+            } else if (INT_PIN_NUM & CentralBtnUpPin) {
+
+                if (!bCentralBtnUpPressed)
+                {
+                    CentralBtnUpPress();
+                } else
+                {
+                    CentralBtnUpRelease();
+                }
+
+                bCentralBtnUpPressed = !bCentralBtnUpPressed;
+
+            }
+						
+				//wait 300ms till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
+				Delay_ms(300);
+				bCentralBtnDebounceReady = true;	
+				
     }
 }
 
@@ -117,37 +191,34 @@ SwitchTask(void *pvParameters)
 //
 //*****************************************************************************
 uint32_t
-SwitchTaskInit(void)
-{
+SwitchTaskInit(void) {
+
     //
-    // Unlock the GPIO LOCK register for Right button to work.
+    // Create button semaphore
     //
-    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
-    HWREG(GPIO_PORTF_BASE + GPIO_O_CR) = 0xFF;
+    xButtonPressedSemaphore = xSemaphoreCreateMutex();
 
     //
     // Initialize the buttons
     //
     ButtonsInit();
 
-
-		//
-    // Create button semaphore
-    //
-		xButtonPressedSemaphore = xSemaphoreCreateMutex();
-
+		bCentralBtnDownPressed = false;
+    bCentralBtnUpPressed = false;
+    LCD_print_string("Window neutral");
+		
     //
     // Create the switch task.
     //
-    if(xTaskCreate(SwitchTask, (const portCHAR *)"Switch",
-                   SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                   PRIORITY_SWITCH_TASK, NULL) != pdTRUE)
-    {
-        return(1);
+    if (xTaskCreate(SwitchTask, (const portCHAR * )
+                    "Switch",
+                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
+                    PRIORITY_SWITCH_TASK, NULL) != pdTRUE) {
+        return (1);
     }
 
     //
     // Success.
     //
-    return(0);
+    return (0);
 }

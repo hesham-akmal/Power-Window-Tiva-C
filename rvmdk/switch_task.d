@@ -25,3 +25,5 @@
 .\rvmdk\switch_task.o: priorities.h
 .\rvmdk\switch_task.o: FreeRTOS\Source\include\task.h
 .\rvmdk\switch_task.o: FreeRTOS\Source\include\list.h
+.\rvmdk\switch_task.o: PORTS.h
+.\rvmdk\switch_task.o: LCD.h
