@@ -55,21 +55,19 @@ bool bCentralBtnDebounceReady;
 
 void onButtonInt(void) {
 
-    //Get which pin interrupted
-    uint8_t x = GPIOIntStatus(CentralBTNS_GPIO_PORT_BASE, false);
+	  //Get which pin interrupted
+    INT_PIN_NUM = GPIOIntStatus(CentralBTNS_GPIO_PORT_BASE, false);
+		
+		GPIOIntClear(CentralBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
 
 		//The following if statement is needed, as when a button is pressed, multiple strange interrupts could occur.
 		//We only need certain pin interrupts
     if ( (INT_PIN_NUM & CentralBtnDownPin) || (INT_PIN_NUM &  CentralBtnUpPin) )
     {
-				GPIOIntClear(CentralBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
-		
 				if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
 					return;
 					
 				bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
-				
-				INT_PIN_NUM = x; //Switch Task will read value in INT_PIN_NUM
 
         //Unblock SwitchTask //Each button should have a seperate task i think
         portBASE_TYPE xHigherPTW = pdFALSE;
@@ -134,7 +132,7 @@ ButtonsInit(void) {
     //Motor INIT ////////////////////////////////////////////////////////////////////////////////////////////
     ROM_SysCtlPeripheralEnable(Motor_SYSCTL_PERIPH_GPIO);
     GPIOPinTypeGPIOOutput(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2);
-    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin2 | MotorPin2 , 0);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2 , 0);
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		

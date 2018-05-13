@@ -206,7 +206,7 @@ SwitchTask(void * pvParameters) {
             }
 						// write here if conditions for limit switches
 						
-				//wait 500ms till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
+				
 				
 					if ((bCentralAutoDownCheck || bCentralAutoUpCheck) && !firstDelay)
 							firstDelay = true;
@@ -227,6 +227,8 @@ SwitchTask(void * pvParameters) {
 							}
 							firstDelay = false;
 					}
+					
+					//wait 500ms till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
 					Delay_ms(500);
 					bCentralBtnDebounceReady = true;	
 				
