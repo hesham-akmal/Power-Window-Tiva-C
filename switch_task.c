@@ -63,18 +63,18 @@ volatile bool bCentralBtnUpPressed;
 
 //
 
-void RedLEDOn(void){
-GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
+void RedLEDOn(void) {
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
 }
 
-void RedLEDOff(void){
-GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 0);
+void RedLEDOff(void) {
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 0);
 }
 
 //
 
 void Force_Window_Up(void) {
-		//Set H Bridge in1 and in2 and EN
+    //Set H Bridge in1 and in2 and EN
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin1, MotorPin1);
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin2, 0);
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN, MotorPinEN);
@@ -107,7 +107,7 @@ void autoDown(void) {
 
     Force_Window_Down();
 
-    LCD_print_string("Window opening..");
+    LCD_print_string("AUTO open");
 }
 
 void CentralBtnDownRelease(void) {
@@ -139,7 +139,7 @@ void autoUp(void) {
 
     Force_Window_Up();
 
-    LCD_print_string("Window closing..");
+    LCD_print_string("AUTO close");
 }
 
 void CentralBtnUpRelease(void) {
@@ -160,11 +160,11 @@ void CentralBtnUpRelease(void) {
 //*****************************************************************************
 static void
 SwitchTask(void * pvParameters) {
-    
+
     xSemaphoreTake(xButtonPressedSemaphore, 0);
-		bool bCentralAutoDownCheck = false;
-		bool bCentralAutoUpCheck = false;
-		bool firstDelay = false;
+    bool bCentralAutoDownCheck = false;
+    bool bCentralAutoUpCheck = false;
+    bool firstDelay = false;
 
     //
     // Loop forever.
@@ -174,63 +174,73 @@ SwitchTask(void * pvParameters) {
         //Block till button interrupt gives semaphore back
         xSemaphoreTake(xButtonPressedSemaphore, portMAX_DELAY);
 
-            if (INT_PIN_NUM & CentralBtnDownPin) //if INT_PIN_NUM == CentralBtnDownPin
+        if (INT_PIN_NUM & CentralBtnDownPin) //if INT_PIN_NUM == CentralBtnDownPin
+        {
+
+            if (!bCentralBtnDownPressed) //If btn was not held down, therefore it's pressed
             {
-
-                if (!bCentralBtnDownPressed) //If btn was not held down, therefore it's pressed
-                {
-                    CentralBtnDownPress();
-										bCentralAutoDownCheck = true;
-                } else // btn was already held down
-                {
-										if (!firstDelay)
-												CentralBtnDownRelease();
-                }
-
-                bCentralBtnDownPressed = !bCentralBtnDownPressed; //flip pressed bool
-
-            } else if (INT_PIN_NUM & CentralBtnUpPin) {
-
-                if (!bCentralBtnUpPressed)
-                {
-                    CentralBtnUpPress();
-										bCentralAutoUpCheck = true;
-                } else
-                {
-										if (!firstDelay)
-												CentralBtnUpRelease();
-                }
-
-                bCentralBtnUpPressed = !bCentralBtnUpPressed;
-
+                CentralBtnDownPress();
+                bCentralAutoDownCheck = true;
+            } else // btn was already held down
+            {
+                if (!firstDelay)
+                    CentralBtnDownRelease();
             }
-						// write here if conditions for limit switches
+
+            bCentralBtnDownPressed = !bCentralBtnDownPressed; //flip pressed bool
+
+        } else if (INT_PIN_NUM & CentralBtnUpPin) {
+
+            if (!bCentralBtnUpPressed)
+            {
+                CentralBtnUpPress();
+                bCentralAutoUpCheck = true;
+            } else
+            {
+                if (!firstDelay)
+                    CentralBtnUpRelease();
+            }
+
+            bCentralBtnUpPressed = !bCentralBtnUpPressed;
+
+        }
+        // write here if conditions for limit switches
+
+
+
+
+
+        if ((bCentralAutoDownCheck || bCentralAutoUpCheck) && !firstDelay)
+            firstDelay = true;
+
+        //wait 500ms till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
+        Delay_ms(500);
+				
+				if (firstDelay) 
+				{
+            if (bCentralAutoDownCheck) 
+						{
+                if (GPIOPinRead(CentralBTNS_GPIO_PORT_BASE,CentralBtnDownPin) == 0) //Read if BtnDown still pressed
+								{
+                    autoDown();
+                }
+
+                bCentralAutoDownCheck = false;
+            }
+            else if (bCentralAutoUpCheck) 
+						{
+                if (GPIOPinRead(CentralBTNS_GPIO_PORT_BASE,CentralBtnUpPin) == 0) //Read if BtnUp still pressed
+								{
+                    autoUp();
+                }
+
+                bCentralAutoUpCheck = false;
+            }
 						
+            firstDelay = false;
+        }
 				
-				
-					if ((bCentralAutoDownCheck || bCentralAutoUpCheck) && !firstDelay)
-							firstDelay = true;
-					else if (firstDelay){
-							if (bCentralAutoDownCheck){
-									if (!bCentralBtnDownPressed){
-											autoDown();
-									}							
-							
-									bCentralAutoDownCheck = false;
-							}
-							else if (bCentralAutoUpCheck){
-									if (!bCentralBtnUpPressed){
-											autoUp();
-									}							
-			
-									bCentralAutoUpCheck = false;
-							}
-							firstDelay = false;
-					}
-					
-					//wait 500ms till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
-					Delay_ms(500);
-					bCentralBtnDebounceReady = true;	
+				bCentralBtnDebounceReady = true;
 				
     }
 }
@@ -253,10 +263,10 @@ SwitchTaskInit(void) {
     //
     ButtonsInit();
 
-		bCentralBtnDownPressed = false;
+    bCentralBtnDownPressed = false;
     bCentralBtnUpPressed = false;
     LCD_print_string("Window neutral");
-		
+
     //
     // Create the switch task.
     //
