@@ -95,7 +95,17 @@ void CentralBtnDownPress(void) {
 
     RedLEDOn();
 
-    Force_Window_Up();
+    Force_Window_Down();
+
+    LCD_print_string("Window opening..");
+}
+
+void autoDown(void) {
+    UARTprintf("CentralBtnAutoDownPress\n");
+
+    RedLEDOn();
+
+    Force_Window_Down();
 
     LCD_print_string("Window opening..");
 }
@@ -117,7 +127,17 @@ void CentralBtnUpPress(void) {
 
     RedLEDOn();
 
-    Force_Window_Down();
+    Force_Window_Up();
+
+    LCD_print_string("Window closing..");
+}
+
+void autoUp(void) {
+    UARTprintf("CentralBtnAutoUpPress\n");
+
+    RedLEDOn();
+
+    Force_Window_Up();
 
     LCD_print_string("Window closing..");
 }
@@ -142,6 +162,9 @@ static void
 SwitchTask(void * pvParameters) {
     
     xSemaphoreTake(xButtonPressedSemaphore, 0);
+		bool bCentralAutoDownCheck = false;
+		bool bCentralAutoUpCheck = false;
+		bool firstDelay = false;
 
     //
     // Loop forever.
@@ -157,9 +180,11 @@ SwitchTask(void * pvParameters) {
                 if (!bCentralBtnDownPressed) //If btn was not held down, therefore it's pressed
                 {
                     CentralBtnDownPress();
+										bCentralAutoDownCheck = true;
                 } else // btn was already held down
                 {
-                    CentralBtnDownRelease();
+										if (!firstDelay)
+												CentralBtnDownRelease();
                 }
 
                 bCentralBtnDownPressed = !bCentralBtnDownPressed; //flip pressed bool
@@ -169,18 +194,41 @@ SwitchTask(void * pvParameters) {
                 if (!bCentralBtnUpPressed)
                 {
                     CentralBtnUpPress();
+										bCentralAutoUpCheck = true;
                 } else
                 {
-                    CentralBtnUpRelease();
+										if (!firstDelay)
+												CentralBtnUpRelease();
                 }
 
                 bCentralBtnUpPressed = !bCentralBtnUpPressed;
 
             }
+						// write here if conditions for limit switches
 						
-				//wait 300ms till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
-				Delay_ms(300);
-				bCentralBtnDebounceReady = true;	
+				//wait 500ms till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
+				
+					if ((bCentralAutoDownCheck || bCentralAutoUpCheck) && !firstDelay)
+							firstDelay = true;
+					else if (firstDelay){
+							if (bCentralAutoDownCheck){
+									if (!bCentralBtnDownPressed){
+											autoDown();
+									}							
+							
+									bCentralAutoDownCheck = false;
+							}
+							else if (bCentralAutoUpCheck){
+									if (!bCentralBtnUpPressed){
+											autoUp();
+									}							
+			
+									bCentralAutoUpCheck = false;
+							}
+							firstDelay = false;
+					}
+					Delay_ms(500);
+					bCentralBtnDebounceReady = true;	
 				
     }
 }

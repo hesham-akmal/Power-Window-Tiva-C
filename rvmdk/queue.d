@@ -1,9 +1,9 @@
 .\rvmdk\queue.o: FreeRTOS\Source\queue.c
-.\rvmdk\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\rvmdk\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\rvmdk\queue.o: C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h
+.\rvmdk\queue.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h
 .\rvmdk\queue.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\rvmdk\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\rvmdk\queue.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
+.\rvmdk\queue.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 .\rvmdk\queue.o: .\FreeRTOSConfig.h
 .\rvmdk\queue.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\queue.o: FreeRTOS\Source\include\portable.h

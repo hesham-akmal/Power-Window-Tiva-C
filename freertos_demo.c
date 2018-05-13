@@ -184,12 +184,12 @@ main(void)
     //
     // Create the LED task.
     //
-    /*if(LEDTaskInit() != 0)
+    if(LEDTaskInit() != 0)
     {
         while(1)
         {
         }
-    }*/
+    }
 
     //
     // Create the switch task.
