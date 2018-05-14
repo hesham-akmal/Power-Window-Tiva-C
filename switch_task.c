@@ -53,15 +53,9 @@
 
 xSemaphoreHandle xButtonPressedSemaphore;
 
-//From buttons.c //////////////////////
-extern uint8_t INT_PIN_NUM;
-extern bool bCentralBtnDebounceReady;
-///////////////////////////////////////
-
 volatile bool bCentralBtnDownPressed;
 volatile bool bCentralBtnUpPressed;
 
-//
 
 void RedLEDOn(void) {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
@@ -101,11 +95,7 @@ void CentralBtnDownPress(void) {
 }
 
 void AutoDown(void) {
-    UARTprintf("CentralBtnAutoDown\n");
-
-    //RedLEDOn();
-
-    //Force_Window_Down();
+    UARTprintf("AUTO open window\n");
 
     LCD_print_string("AUTO open");
 }
@@ -133,11 +123,7 @@ void CentralBtnUpPress(void) {
 }
 
 void AutoUp(void) {
-    UARTprintf("AUTO close\n");
-
-    //RedLEDOn();
-
-    //Force_Window_Up();
+    UARTprintf("AUTO close window\n");
 
     LCD_print_string("AUTO close");
 }
@@ -164,11 +150,7 @@ SwitchTask(void * pvParameters) {
     xSemaphoreTake(xButtonPressedSemaphore, 0);
     bool bCentralAutoDownCheck = false;
     bool bCentralAutoUpCheck = false;
-    bool firstDelay = false;
 
-    //
-    // Loop forever.
-    //
     while (1)
     {
         //Block till button interrupt gives semaphore back
@@ -183,8 +165,7 @@ SwitchTask(void * pvParameters) {
                 bCentralAutoDownCheck = true;
             } else // btn was already held down
             {
-                if (!firstDelay)
-                    CentralBtnDownRelease();
+                CentralBtnDownRelease();
             }
 
             bCentralBtnDownPressed = !bCentralBtnDownPressed; //flip pressed bool
@@ -197,8 +178,7 @@ SwitchTask(void * pvParameters) {
                 bCentralAutoUpCheck = true;
             } else
             {
-                if (!firstDelay)
-                    CentralBtnUpRelease();
+                CentralBtnUpRelease();
             }
 
             bCentralBtnUpPressed = !bCentralBtnUpPressed;
@@ -208,40 +188,37 @@ SwitchTask(void * pvParameters) {
 
 
 
+        //wait till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
+        Delay_ms(300);
 
-
-        if ((bCentralAutoDownCheck || bCentralAutoUpCheck) && !firstDelay)
-            firstDelay = true;
-
-        //wait 500ms till the button behavior is checked again in the buttons.c intterupt method onButtonInt()
-        Delay_ms(500);
-				
-				if (firstDelay) 
-				{
-            if (bCentralAutoDownCheck) 
-						{
+        if(!androidINT) ////not working for some reason
+        {
+            if (bCentralAutoDownCheck)
+            {
                 if (GPIOPinRead(CentralBTNS_GPIO_PORT_BASE,CentralBtnDownPin) == 0) //Read if BtnDown still pressed
-								{
+                {
                     AutoDown();
                 }
 
                 bCentralAutoDownCheck = false;
             }
-            else if (bCentralAutoUpCheck) 
-						{
+            else if (bCentralAutoUpCheck)
+            {
                 if (GPIOPinRead(CentralBTNS_GPIO_PORT_BASE,CentralBtnUpPin) == 0) //Read if BtnUp still pressed
-								{
+                {
                     AutoUp();
                 }
 
                 bCentralAutoUpCheck = false;
             }
-						
-            firstDelay = false;
+
+
+            bCentralBtnDebounceReady = true;
         }
-				
-				bCentralBtnDebounceReady = true;
-				
+        else
+        {
+            androidINT = false; //reset
+        }
     }
 }
 
@@ -265,6 +242,7 @@ SwitchTaskInit(void) {
 
     bCentralBtnDownPressed = false;
     bCentralBtnUpPressed = false;
+		androidINT = false;
     LCD_print_string("Window neutral");
 
     //

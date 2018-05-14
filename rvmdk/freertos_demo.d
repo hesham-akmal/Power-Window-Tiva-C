@@ -25,3 +25,4 @@
 .\rvmdk\freertos_demo.o: FreeRTOS\Source\include\task.h
 .\rvmdk\freertos_demo.o: FreeRTOS\Source\include\list.h
 .\rvmdk\freertos_demo.o: LCD.h
+.\rvmdk\freertos_demo.o: PORTS.h

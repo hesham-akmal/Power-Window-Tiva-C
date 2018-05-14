@@ -49,7 +49,6 @@
 #define SWITCHTASKSTACKSIZE 128
 
 extern xSemaphoreHandle xButtonPressedSemaphore;
-//extern xQueueHandle BUTTONS_Queue;
 
 uint8_t INT_PIN_NUM;
 bool bCentralBtnDebounceReady;
@@ -136,15 +135,6 @@ ButtonsInit(void) {
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2 , 0);
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		
-		/*unsigned char a = UARTgetc();
-		
-		if(a == 'x')
-			LCD_print_string("XXX");
-		else if(a == 'z') 	
-			LCD_print_string("ZZZ");
-		
-		LCD_print_string("aa");*/
 }
 
 //*****************************************************************************

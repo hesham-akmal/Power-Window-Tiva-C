@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    private static final int PORT_NUMBER = 3000;
+    private static final int PORT_NUMBER = 10001;
     private final Socket socket;
     public static ObjectInputStream ois;
     public static ObjectOutputStream oos;
@@ -30,12 +30,8 @@ public class Server {
                     try {
                         char c = (char) ois.readObject();
                         System.out.println("Command read: " + c);
-                        switch (c) {
-                            case 'z':
-                                TwoWaySerialComm.out.write(c);
-                                TwoWaySerialComm.out.flush();
-                                break;
-                        }
+                        TwoWaySerialComm.out.write(c);
+                        TwoWaySerialComm.out.flush();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -48,16 +44,19 @@ public class Server {
     }
 
     public static void main(String[] args) {
+
         ServerSocket server = null;
 
         try {
-
             new TwoWaySerialComm().connect("COM3", 115200); //connect to com port
+        } catch (Exception ex) {
+            System.out.println("TIVA COM NOT DETECTED. ERROR AT TwoWaySerialComm connect");
+        }
 
+        try {
             server = new ServerSocket(PORT_NUMBER);
             new Server(server.accept());
-
-        } catch (Exception var10) {
+        } catch (Exception x) {
             System.out.println("Unable to start server.");
         } finally {
             try {

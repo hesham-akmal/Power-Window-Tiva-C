@@ -1,10 +1,7 @@
-#include "FreeRTOS.h"
-#include "queue.h"
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////Central Buttons Port and Pins
 #define CentralBTNS_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOC
-#define CentralBTNS_GPIO_PORT_BASE GPIO_PORTC_BASE 
+#define CentralBTNS_GPIO_PORT_BASE GPIO_PORTC_BASE
 #define CentralBtnDownPin GPIO_PIN_4
 #define CentralBtnUpPin GPIO_PIN_5
 //////////////////////
@@ -22,13 +19,25 @@
 # define MotorPin1 GPIO_PIN_2
 # define MotorPin2 GPIO_PIN_3
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+uint32_t ListenTaskInit(void);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//From buttons.c //////////////////////
+extern uint8_t INT_PIN_NUM;
+extern bool bCentralBtnDebounceReady;
+///////////////////////////////////////
+//From android_listen.c ///////////////
+extern bool androidINT;
+///////////////////////////////////////
+
+
 struct State {
-  bool firstDelay; 
-  bool bCentralAutoDownCheck;
-  bool bCentralAutoUpCheck;
-	bool bCentralBtnDownPressed;
-  bool bCentralBtnUpPressed;
-  unsigned long Next[4];}; 
+    bool firstDelay;
+    bool bCentralAutoDownCheck;
+    bool bCentralAutoUpCheck;
+    bool bCentralBtnDownPressed;
+    bool bCentralBtnUpPressed;
+    unsigned long Next[4];
+};
 
 typedef const struct State StateType;
 #define neutral 0

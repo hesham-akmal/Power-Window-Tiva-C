@@ -39,6 +39,8 @@
 #include "queue.h"
 #include "semphr.h"
 #include "LCD.h"
+#include "PORTS.h"
+
 
 //*****************************************************************************
 //
@@ -181,10 +183,8 @@ main(void)
     //
     UARTprintf("Welcome to our Power Window project!\n");
 		
-    //
-    // Create the LED task.
-    //
-    if(LEDTaskInit() != 0)
+    
+    if(ListenTaskInit() != 0)
     {
         while(1)
         {

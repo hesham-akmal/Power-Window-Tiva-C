@@ -8,22 +8,52 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:id="@+id/statusText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Neutral"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/colorPrimaryDark"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop"
-        android:onClick="StopBtnClick"/>
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Neutral"
+            android:textSize="30dp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <Button
+            android:id="@+id/engineBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Engine Start"/>
+
+        <ImageButton
+            android:id="@+id/upBtn"
+            android:layout_marginTop="20dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/up"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            />
+
+        <ImageButton
+            android:id="@+id/downBtn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/up"
+            android:scaleType="fitCenter"
+            android:rotation="180"
+            android:background="@null"
+            />
+
+    </LinearLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>
