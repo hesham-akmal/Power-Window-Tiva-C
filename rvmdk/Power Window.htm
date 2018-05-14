@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\rvmdk\Power Window.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\rvmdk\Power Window.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Mon May 14 00:44:46 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Mon May 14 01:57:47 2018
 <BR><P>
 <H3>Maximum Stack Usage =        176 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -221,8 +221,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 </UL>
-<BR>[Called By]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autoDown
-<LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnDownPress
+<BR>[Called By]<UL><LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnDownPress
 </UL>
 
 <P><STRONG><a name="[25]"></a>Force_Window_Stop</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, switch_task.o(i.Force_Window_Stop))
@@ -237,8 +236,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 </UL>
-<BR>[Called By]<UL><LI><a href="#[42]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autoUp
-<LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnUpPress
+<BR>[Called By]<UL><LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnUpPress
 </UL>
 
 <P><STRONG><a name="[2f]"></a>GPIODirModeSet</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, gpio.o(i.GPIODirModeSet))
@@ -424,9 +422,7 @@ Global Symbols
 <P><STRONG><a name="[20]"></a>RedLEDOn</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, switch_task.o(i.RedLEDOn))
 <BR><BR>[Calls]<UL><LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 </UL>
-<BR>[Called By]<UL><LI><a href="#[42]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autoUp
-<LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autoDown
-<LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnUpPress
+<BR>[Called By]<UL><LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnUpPress
 <LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnDownPress
 </UL>
 
@@ -489,23 +485,19 @@ Global Symbols
 
 <P><STRONG><a name="[80]"></a>__scatterload_zeroinit</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_zeroinit), UNUSED)
 
-<P><STRONG><a name="[41]"></a>autoDown</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, switch_task.o(i.autoDown))
+<P><STRONG><a name="[41]"></a>autoDown</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, switch_task.o(i.autoDown))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = autoDown &rArr; UARTprintf &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_print_string
-<LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RedLEDOn
-<LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Force_Window_Down
 <LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UARTprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SwitchTask
 </UL>
 
-<P><STRONG><a name="[42]"></a>autoUp</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, switch_task.o(i.autoUp))
+<P><STRONG><a name="[42]"></a>autoUp</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, switch_task.o(i.autoUp))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = autoUp &rArr; UARTprintf &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_print_string
-<LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RedLEDOn
-<LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Force_Window_Up
 <LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UARTprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SwitchTask

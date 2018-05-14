@@ -101,11 +101,11 @@ void CentralBtnDownPress(void) {
 }
 
 void autoDown(void) {
-    UARTprintf("CentralBtnAutoDownPress\n");
+    UARTprintf("CentralBtnAutoDown\n");
 
-    RedLEDOn();
+    //RedLEDOn();
 
-    Force_Window_Down();
+    //Force_Window_Down();
 
     LCD_print_string("AUTO open");
 }
@@ -133,11 +133,11 @@ void CentralBtnUpPress(void) {
 }
 
 void autoUp(void) {
-    UARTprintf("CentralBtnAutoUpPress\n");
+    UARTprintf("CentralBtnAutoUp\n");
 
-    RedLEDOn();
+    //RedLEDOn();
 
-    Force_Window_Up();
+    //Force_Window_Up();
 
     LCD_print_string("AUTO close");
 }
