@@ -4,7 +4,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
+public class Server extends Thread {
     private static final int PORT_NUMBER = 10001;
     private final Socket socket;
     public static ObjectInputStream ois;
@@ -13,7 +13,6 @@ public class Server {
     private Server(Socket socket) {
         this.socket = socket;
         System.out.println("New client connected from " + socket.getInetAddress().getHostAddress());
-        run();
     }
 
     public void run() {
@@ -33,7 +32,15 @@ public class Server {
                         TwoWaySerialComm.out.write(c);
                         TwoWaySerialComm.out.flush();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        System.out.println("APP DISCONNECT, CLOSING THREAD");
+                        try {
+                            ois.close();
+                            oos.close();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        break;
                     }
                 }
             }).start();
@@ -55,7 +62,10 @@ public class Server {
 
         try {
             server = new ServerSocket(PORT_NUMBER);
-            new Server(server.accept());
+
+            while (true)
+                new Server(server.accept()).start();
+
         } catch (Exception x) {
             System.out.println("Unable to start server.");
         } finally {

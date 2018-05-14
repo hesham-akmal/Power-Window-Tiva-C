@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Power Window Service:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Power_Window_Service_jar</output-path>
+    <root id="archive" name="Power Window Service.jar">
+      <element id="module-output" name="Power Window Service" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/RXTX/RXTXcomm.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
