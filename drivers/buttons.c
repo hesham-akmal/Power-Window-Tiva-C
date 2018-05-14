@@ -41,6 +41,7 @@
 #include "semphr.h"
 #include "priorities.h"
 #include "driverlib/interrupt.h"
+#include "LCD.h"
 
 
 ////////////////////////////
@@ -136,6 +137,14 @@ ButtonsInit(void) {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		
+		/*unsigned char a = UARTgetc();
+		
+		if(a == 'x')
+			LCD_print_string("XXX");
+		else if(a == 'z') 	
+			LCD_print_string("ZZZ");
+		
+		LCD_print_string("aa");*/
 }
 
 //*****************************************************************************

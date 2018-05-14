@@ -38,10 +38,12 @@ typedef const struct State StateType;
 #define manualDown 4
 #define firstDelayDown 5
 #define firstDelayUp 6 //next state should be either auto up or manual up
+
+/*
 StateType FSM[5]={
  {false,false, false, false, false, {goN,waitN,goN,waitN}},  //next states should be firstDelay Down/up
  {0x22, 500,{goE,goE,goE,goE}},
  {0x0C,3000,{goE,goE,waitE,waitE}},
  {0x14, 500,{goN,goN,goN,goN}},
- {true, true, false, true, false, {goN,goN,goN,goN}}};
+ {true, true, false, true, false, {goN,goN,goN,goN}}};*/
 

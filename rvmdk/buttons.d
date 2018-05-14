@@ -25,3 +25,4 @@
 .\rvmdk\buttons.o: FreeRTOS\Source\include\semphr.h
 .\rvmdk\buttons.o: .\priorities.h
 .\rvmdk\buttons.o: .\driverlib/interrupt.h
+.\rvmdk\buttons.o: .\LCD.h

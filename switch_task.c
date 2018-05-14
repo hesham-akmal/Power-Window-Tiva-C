@@ -91,7 +91,7 @@ void Force_Window_Stop(void) {
 //
 
 void CentralBtnDownPress(void) {
-    UARTprintf("CentralBtnDownPress\n");
+    UARTprintf("Window opening..\n");
 
     RedLEDOn();
 
@@ -100,7 +100,7 @@ void CentralBtnDownPress(void) {
     LCD_print_string("Window opening..");
 }
 
-void autoDown(void) {
+void AutoDown(void) {
     UARTprintf("CentralBtnAutoDown\n");
 
     //RedLEDOn();
@@ -111,7 +111,7 @@ void autoDown(void) {
 }
 
 void CentralBtnDownRelease(void) {
-    UARTprintf("CentralBtnDownRelease\n");
+    UARTprintf("Window neutral\n");
 
     RedLEDOff();
 
@@ -123,7 +123,7 @@ void CentralBtnDownRelease(void) {
 //
 
 void CentralBtnUpPress(void) {
-    UARTprintf("CentralBtnUpPress\n");
+    UARTprintf("Window closing..\n");
 
     RedLEDOn();
 
@@ -132,8 +132,8 @@ void CentralBtnUpPress(void) {
     LCD_print_string("Window closing..");
 }
 
-void autoUp(void) {
-    UARTprintf("CentralBtnAutoUp\n");
+void AutoUp(void) {
+    UARTprintf("AUTO close\n");
 
     //RedLEDOn();
 
@@ -143,7 +143,7 @@ void autoUp(void) {
 }
 
 void CentralBtnUpRelease(void) {
-    UARTprintf("CentralBtnUpRelease\n");
+    UARTprintf("Window neutral\n");
 
     RedLEDOff();
 
@@ -222,7 +222,7 @@ SwitchTask(void * pvParameters) {
 						{
                 if (GPIOPinRead(CentralBTNS_GPIO_PORT_BASE,CentralBtnDownPin) == 0) //Read if BtnDown still pressed
 								{
-                    autoDown();
+                    AutoDown();
                 }
 
                 bCentralAutoDownCheck = false;
@@ -231,7 +231,7 @@ SwitchTask(void * pvParameters) {
 						{
                 if (GPIOPinRead(CentralBTNS_GPIO_PORT_BASE,CentralBtnUpPin) == 0) //Read if BtnUp still pressed
 								{
-                    autoUp();
+                    AutoUp();
                 }
 
                 bCentralAutoUpCheck = false;

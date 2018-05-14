@@ -179,7 +179,7 @@ main(void)
     //
     // Print demo introduction.
     //
-    UARTprintf("\n\nWelcome to our Power Window project!\n");
+    UARTprintf("Welcome to our Power Window project!\n");
 		
     //
     // Create the LED task.
