@@ -44,6 +44,7 @@
 #include "LCD.h"
 
 
+
 //*****************************************************************************
 //
 // The stack size for the display task.
@@ -55,7 +56,8 @@ xSemaphoreHandle xButtonPressedSemaphore;
 
 volatile bool bCentralBtnDownPressed;
 volatile bool bCentralBtnUpPressed;
-
+//From buttons.c //////////////////////
+extern volatile bool bEngineStarted;
 
 void RedLEDOn(void) {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
@@ -155,6 +157,9 @@ SwitchTask(void * pvParameters) {
     {
         //Block till button interrupt gives semaphore back
         xSemaphoreTake(xButtonPressedSemaphore, portMAX_DELAY);
+
+				if(!bEngineStarted)
+					return;
 
         if (INT_PIN_NUM & CentralBtnDownPin) //if INT_PIN_NUM == CentralBtnDownPin
         {

@@ -36,7 +36,7 @@ xSemaphoreHandle xEngineStartButtonPressedSemaphore;
 
 //From buttons.c //////////////////////
 extern bool bEngineStartDebounceReady;
-extern bool bEngineStarted;
+extern volatile bool bEngineStarted;
 ///////////////////////////////////////
 
 //*****************************************************************************
@@ -57,7 +57,7 @@ EngineTask(void * pvParameters) {
         //Block till button interrupt gives semaphore back
         xSemaphoreTake(xEngineStartButtonPressedSemaphore, portMAX_DELAY);
 				
-				bEngineStarted = !bEngineStarted;
+					bEngineStarted = !bEngineStarted;
 			
 				Delay_ms(500);
 				
@@ -76,8 +76,7 @@ EngineTaskInit(void) {
     // Create button semaphore
     //
     xEngineStartButtonPressedSemaphore = xSemaphoreCreateMutex();
-
-		bEngineStarted = false;
+		
 	
     //
     // Create the switch task.

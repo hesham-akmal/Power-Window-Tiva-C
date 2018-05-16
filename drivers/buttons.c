@@ -54,7 +54,7 @@ extern xSemaphoreHandle xEngineStartButtonPressedSemaphore;
 uint8_t INT_PIN_NUM;
 bool bCentralBtnDebounceReady;
 bool bEngineStartDebounceReady;
-bool bEngineStarted;
+volatile bool bEngineStarted;
 
 void
 onButtonInt(void) {
@@ -135,8 +135,8 @@ ButtonsInit(void) {
 		
 
     //enable Central Buttons pins, CentralBTNS_GPIO_PORT_BASE and pin numbers are defined at PORTS.h ////////////////////////////////////
-    //ROM_SysCtlPeripheralEnable(CentralBTNS_SYSCTL_PERIPH_GPIO);                            //comment this line out if you're trying PF0 and PF4
-    //GPIOPinTypeGPIOInput(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin); //comment this line out if you're trying PF0 and PF4
+    ROM_SysCtlPeripheralEnable(CentralBTNS_SYSCTL_PERIPH_GPIO);                            //comment this line out if you're trying PF0 and PF4
+    GPIOPinTypeGPIOInput(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin); //comment this line out if you're trying PF0 and PF4
     //Central Buttons INTERRUPT INIT //////////////////////////////////
     GPIOIntDisable(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin);
     GPIOIntTypeSet(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin, GPIO_BOTH_EDGES);
@@ -145,6 +145,8 @@ ButtonsInit(void) {
     GPIOIntRegister(CentralBTNS_GPIO_PORT_BASE, onButtonInt);	//Link the method that is going to be called on the interrupt
 		
 		bCentralBtnDebounceReady = true;
+		bEngineStartDebounceReady = true;
+		bEngineStarted = true;
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Motor INIT ////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,7 +159,6 @@ ButtonsInit(void) {
     ROM_SysCtlPeripheralEnable(Engine_SYSCTL_PERIPH_GPIO);
     GPIOPinTypeGPIOInput(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
 		//Engine Buttons INTERRUPT INIT //////////////////////////////////
     GPIOIntDisable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
     GPIOIntTypeSet(EngineStartButton_GPIO_PORT_BASE, EngineStartButton, GPIO_BOTH_EDGES);

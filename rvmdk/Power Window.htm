@@ -3,11 +3,11 @@
 <title>Static Call Graph - [.\rvmdk\Power Window.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\rvmdk\Power Window.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed May 16 10:59:28 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Wed May 16 22:36:33 2018
 <BR><P>
-<H3>Maximum Stack Usage =        176 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        192 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-main &rArr; ConfigureUART &rArr; UARTStdioConfig &rArr; xQueueCreateMutex &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+SwitchTask &rArr; CentralBtnUpRelease &rArr; UARTprintf &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 <P>
 <H3>
 Functions with no stack information
@@ -160,16 +160,16 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SwitchTask
 </UL>
 
-<P><STRONG><a name="[1c]"></a>ButtonsInit</STRONG> (Thumb, 198 bytes, Stack size 16 bytes, buttons.o(i.ButtonsInit))
+<P><STRONG><a name="[1c]"></a>ButtonsInit</STRONG> (Thumb, 222 bytes, Stack size 16 bytes, buttons.o(i.ButtonsInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = ButtonsInit &rArr; GPIOPinTypeGPIOOutput &rArr; GPIOPadConfigSet
 </UL>
-<BR>[Calls]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
+<BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 <LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOOutput
-<LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOInput
-<LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntTypeSet
-<LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntRegister
-<LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntEnable
-<LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntDisable
+<LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOInput
+<LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntTypeSet
+<LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntRegister
+<LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntEnable
+<LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntDisable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SwitchTaskInit
 </UL>
@@ -237,7 +237,7 @@ Global Symbols
 <LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_INIT
 </UL>
 
-<P><STRONG><a name="[32]"></a>EngineTaskInit</STRONG> (Thumb, 54 bytes, Stack size 24 bytes, engine_task.o(i.EngineTaskInit))
+<P><STRONG><a name="[32]"></a>EngineTaskInit</STRONG> (Thumb, 50 bytes, Stack size 24 bytes, engine_task.o(i.EngineTaskInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = EngineTaskInit &rArr; xQueueCreateMutex &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueCreateMutex
@@ -249,13 +249,13 @@ Global Symbols
 <P><STRONG><a name="[26]"></a>Force_Window_Down</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, switch_task.o(i.Force_Window_Down))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Force_Window_Down
 </UL>
-<BR>[Calls]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
+<BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 </UL>
 <BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnDownPress
 </UL>
 
 <P><STRONG><a name="[29]"></a>Force_Window_Stop</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, switch_task.o(i.Force_Window_Stop))
-<BR><BR>[Calls]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
+<BR><BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnUpRelease
 <LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnDownRelease
@@ -264,14 +264,14 @@ Global Symbols
 <P><STRONG><a name="[2b]"></a>Force_Window_Up</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, switch_task.o(i.Force_Window_Up))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Force_Window_Up
 </UL>
-<BR>[Calls]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
+<BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnUpPress
 </UL>
 
 <P><STRONG><a name="[38]"></a>GPIODirModeSet</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, gpio.o(i.GPIODirModeSet))
 <BR><BR>[Called By]<UL><LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOOutput
-<LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOInput
+<LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOInput
 </UL>
 
 <P><STRONG><a name="[48]"></a>GPIOIntClear</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, gpio.o(i.GPIOIntClear))
@@ -279,15 +279,15 @@ Global Symbols
 <LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;onButtonInt
 </UL>
 
-<P><STRONG><a name="[1e]"></a>GPIOIntDisable</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, gpio.o(i.GPIOIntDisable))
+<P><STRONG><a name="[1f]"></a>GPIOIntDisable</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, gpio.o(i.GPIOIntDisable))
 <BR><BR>[Called By]<UL><LI><a href="#[1c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ButtonsInit
 </UL>
 
-<P><STRONG><a name="[20]"></a>GPIOIntEnable</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, gpio.o(i.GPIOIntEnable))
+<P><STRONG><a name="[21]"></a>GPIOIntEnable</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, gpio.o(i.GPIOIntEnable))
 <BR><BR>[Called By]<UL><LI><a href="#[1c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ButtonsInit
 </UL>
 
-<P><STRONG><a name="[21]"></a>GPIOIntRegister</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, gpio.o(i.GPIOIntRegister))
+<P><STRONG><a name="[22]"></a>GPIOIntRegister</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, gpio.o(i.GPIOIntRegister))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = GPIOIntRegister &rArr; IntRegister
 </UL>
 <BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IntRegister
@@ -301,7 +301,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;onButtonInt
 </UL>
 
-<P><STRONG><a name="[1f]"></a>GPIOIntTypeSet</STRONG> (Thumb, 80 bytes, Stack size 0 bytes, gpio.o(i.GPIOIntTypeSet))
+<P><STRONG><a name="[20]"></a>GPIOIntTypeSet</STRONG> (Thumb, 80 bytes, Stack size 0 bytes, gpio.o(i.GPIOIntTypeSet))
 <BR><BR>[Called By]<UL><LI><a href="#[1c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ButtonsInit
 </UL>
 
@@ -309,14 +309,14 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = GPIOPadConfigSet
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOOutput
-<LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOInput
+<LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinTypeGPIOInput
 </UL>
 
 <P><STRONG><a name="[40]"></a>GPIOPinRead</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, gpio.o(i.GPIOPinRead))
 <BR><BR>[Called By]<UL><LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SwitchTask
 </UL>
 
-<P><STRONG><a name="[23]"></a>GPIOPinTypeGPIOInput</STRONG> (Thumb, 28 bytes, Stack size 12 bytes, gpio.o(i.GPIOPinTypeGPIOInput))
+<P><STRONG><a name="[1e]"></a>GPIOPinTypeGPIOInput</STRONG> (Thumb, 28 bytes, Stack size 12 bytes, gpio.o(i.GPIOPinTypeGPIOInput))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = GPIOPinTypeGPIOInput &rArr; GPIOPadConfigSet
 </UL>
 <BR>[Calls]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPadConfigSet
@@ -335,7 +335,7 @@ Global Symbols
 <LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_INIT
 </UL>
 
-<P><STRONG><a name="[22]"></a>GPIOPinWrite</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, gpio.o(i.GPIOPinWrite))
+<P><STRONG><a name="[23]"></a>GPIOPinWrite</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, gpio.o(i.GPIOPinWrite))
 <BR><BR>[Called By]<UL><LI><a href="#[1c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ButtonsInit
 <LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RedLEDOn
 <LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RedLEDOff
@@ -345,13 +345,13 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[37]"></a>IntEnable</STRONG> (Thumb, 92 bytes, Stack size 0 bytes, interrupt.o(i.IntEnable))
-<BR><BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntRegister
+<BR><BR>[Called By]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntRegister
 </UL>
 
 <P><STRONG><a name="[36]"></a>IntRegister</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, interrupt.o(i.IntRegister))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = IntRegister
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntRegister
+<BR>[Called By]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntRegister
 </UL>
 
 <P><STRONG><a name="[3a]"></a>LCD_INIT</STRONG> (Thumb, 158 bytes, Stack size 8 bytes, lcd.o(i.LCD_INIT))
@@ -405,14 +405,14 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[28]"></a>RedLEDOff</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, switch_task.o(i.RedLEDOff))
-<BR><BR>[Calls]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
+<BR><BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnUpRelease
 <LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnDownRelease
 </UL>
 
 <P><STRONG><a name="[25]"></a>RedLEDOn</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, switch_task.o(i.RedLEDOn))
-<BR><BR>[Calls]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
+<BR><BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinWrite
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnUpPress
 <LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CentralBtnDownPress
@@ -922,8 +922,8 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 </UL>
 
-<P><STRONG><a name="[c]"></a>SwitchTask</STRONG> (Thumb, 172 bytes, Stack size 0 bytes, switch_task.o(i.SwitchTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = SwitchTask &rArr; CentralBtnUpRelease &rArr; UARTprintf &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[c]"></a>SwitchTask</STRONG> (Thumb, 190 bytes, Stack size 40 bytes, switch_task.o(i.SwitchTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = SwitchTask &rArr; CentralBtnUpRelease &rArr; UARTprintf &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[40]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPinRead
@@ -937,7 +937,7 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> switch_task.o(i.SwitchTaskInit)
 </UL>
-<P><STRONG><a name="[b]"></a>ListenTask</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, android_listen.o(i.ListenTask))
+<P><STRONG><a name="[b]"></a>ListenTask</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, android_listen.o(i.ListenTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = ListenTask &rArr; UnblockSwitchTask &rArr; xQueueGiveFromISR &rArr; xTaskRemoveFromEventList
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UnblockSwitchTask
@@ -954,7 +954,7 @@ Local Symbols
 <BR>[Address Reference Count : 1]<UL><LI> engine_task.o(i.EngineTaskInit)
 </UL>
 <P><STRONG><a name="[35]"></a>_GPIOIntNumberGet</STRONG> (Thumb, 62 bytes, Stack size 0 bytes, gpio.o(i._GPIOIntNumberGet))
-<BR><BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntRegister
+<BR><BR>[Called By]<UL><LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOIntRegister
 </UL>
 <P>
 <H3>
