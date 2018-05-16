@@ -2,54 +2,81 @@
 <body>
 <pre>
 <h1>µVision Build Log</h1>
-<h2>Tool Versions:</h2>
-IDE-Version: µVision V5.24.2.0
-Copyright (C) 2017 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information:   ,  , LIC=----
- 
-Tool Versions:
-Toolchain:       MDK-Lite  Version: 5.24.1
-Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.06 update 5 (build 528)
-Assembler:       Armasm.exe V5.06 update 5 (build 528)
-Linker/Locator:  ArmLink.exe V5.06 update 5 (build 528)
-Library Manager: ArmAr.exe V5.06 update 5 (build 528)
-Hex Converter:   FromElf.exe V5.06 update 5 (build 528)
-CPU DLL:         SARMCM3.DLL V5.24.1
-Dialog DLL:      DCM.DLL V1.16.0.0
-Target DLL:      lmidk-agdi.dll V???
-Dialog DLL:      TCM.DLL V1.32.0.0
- 
 <h2>Project:</h2>
-C:\Users\hesha\Documents\GitHub\Power-Window-Tiva-C\Power Window.uvproj
+C:\Keil\Powe Window\Power-Window-Tiva-C\Power Window.uvproj
 Project File Date:  05/16/2018
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Rebuild target 'freertos_demo'
-compiling heap_2.c...
-compiling list.c...
-compiling led_task.c...
-compiling port.c...
-compiling queue.c...
-compiling rgb.c...
-assembling startup_rvmdk.S...
-compiling ustdlib.c...
-compiling uartstdio.c...
-compiling tasks.c...
-compiling switch_task.c...
-compiling freertos_demo.c...
-compiling buttons.c...
-compiling android_listen.c...
+Build target 'freertos_demo'
 compiling states_tasks.c...
-compiling LCD.c...
 linking...
-Program Size: Code=7208 RO-data=900 RW-data=1644 ZI-data=30932  
+Program Size: Code=7288 RO-data=1012 RW-data=1644 ZI-data=30932  
 After Build - User command #1: fromelf --bin --output .\rvmdk\Power Window.bin .\rvmdk\Power Window.axf
 Error: Q0466E: An output file can only be specified if there is a single input file
 Finished: 0 information, 0 warning and 1 error messages.
 ".\rvmdk\Power Window.axf" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
+ttonsInit();
+states_tasks.c(264): error:  #147: declaration is incompatible with "void ButtonsInit(void)" (declared at line 88 of "drivers/buttons.h")
+                ButtonsInit();
+states_tasks.c(265): warning:  #1295-D: Deprecated declaration semaphoresInit - give arg types
+                semaphoresInit();
+states_tasks.c(265): error:  #260-D: explicit type is missing ("int" assumed)
+                semaphoresInit();
+states_tasks.c(266): error:  #169: expected a declaration
+                return(0);
+states_tasks.c(268): error:  #169: expected a declaration
+  }
+states_tasks.c: 3 warnings, 6 errors
+".\rvmdk\Power Window.axf" - 6 Error(s), 3 Warning(s).
+Target not created
+  semaphoresInit();
+states_tasks.c(265): error:  #169: expected a declaration
+                return(0);
+states_tasks.c(267): error:  #169: expected a declaration
+  }
+states_tasks.c: 3 warnings, 8 errors
+".\rvmdk\Power Window.axf" - 8 Error(s), 3 Warning(s).
+Target not created
+ not created
+d a declaration
+                return(0);
+states_tasks.c(267): error:  #169: expected a declaration
+  }
+states_tasks.c: 4 warnings, 7 errors
+".\rvmdk\Power Window.axf" - 8 Error(s), 4 Warning(s).
+Target not created
+or:  #260-D: explicit type is missing ("int" assumed)
+                semaphoresInit();
+states_tasks.c(265): error:  #169: expected a declaration
+                return(0);
+states_tasks.c(267): error:  #169: expected a declaration
+  }
+states_tasks.c: 4 warnings, 9 errors
+".\rvmdk\Power Window.axf" - 11 Error(s), 4 Warning(s).
+Target not created
+();
+states_tasks.c(257): error:  #260-D: explicit type is missing ("int" assumed)
+                semaphoresInit();
+states_tasks.c(258): error:  #169: expected a declaration
+                return(0);
+states_tasks.c(260): error:  #169: expected a declaration
+  }
+states_tasks.c: 7 warnings, 9 errors
+".\rvmdk\Power Window.axf" - 11 Error(s), 7 Warning(s).
+Target not created
+d ButtonsInit(void)" (declared at line 88 of "drivers/buttons.h")
+                ButtonsInit();
+states_tasks.c(257): warning:  #1295-D: Deprecated declaration semaphoresInit - give arg types
+                semaphoresInit();
+states_tasks.c(257): error:  #260-D: explicit type is missing ("int" assumed)
+                semaphoresInit();
+states_tasks.c(258): error:  #169: expected a declaration
+                return(0);
+states_tasks.c(260): error:  #169: expected a declaration
+  }
+states_tasks.c: 7 warnings, 9 errors
+".\rvmdk\Power Window.axf" - 13 Error(s), 7 Warning(s).
+Target not created

@@ -504,6 +504,11 @@
               <FileType>1</FileType>
               <FilePath>.\android_listen.c</FilePath>
             </File>
+            <File>
+              <FileName>states_tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\states_tasks.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

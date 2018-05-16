@@ -1,7 +1,7 @@
 .\rvmdk\uartstdio.o: utils\uartstdio.c
-.\rvmdk\uartstdio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\rvmdk\uartstdio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\rvmdk\uartstdio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\rvmdk\uartstdio.o: C:\Keil\ARM\ARMCC\bin\..\include\stdbool.h
+.\rvmdk\uartstdio.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\rvmdk\uartstdio.o: C:\Keil\ARM\ARMCC\bin\..\include\stdarg.h
 .\rvmdk\uartstdio.o: .\inc/hw_ints.h
 .\rvmdk\uartstdio.o: .\inc/hw_memmap.h
 .\rvmdk\uartstdio.o: .\inc/hw_types.h
@@ -14,7 +14,7 @@
 .\rvmdk\uartstdio.o: .\driverlib/uart.h
 .\rvmdk\uartstdio.o: .\utils/uartstdio.h
 .\rvmdk\uartstdio.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\uartstdio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\rvmdk\uartstdio.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
 .\rvmdk\uartstdio.o: .\FreeRTOSConfig.h
 .\rvmdk\uartstdio.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\uartstdio.o: FreeRTOS\Source\include\portable.h

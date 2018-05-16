@@ -1,6 +1,6 @@
 .\rvmdk\freertos_demo.o: freertos_demo.c
-.\rvmdk\freertos_demo.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\rvmdk\freertos_demo.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\rvmdk\freertos_demo.o: C:\Keil\ARM\ARMCC\bin\..\include\stdbool.h
+.\rvmdk\freertos_demo.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 .\rvmdk\freertos_demo.o: inc/hw_memmap.h
 .\rvmdk\freertos_demo.o: inc/hw_types.h
 .\rvmdk\freertos_demo.o: driverlib/gpio.h
@@ -9,10 +9,10 @@
 .\rvmdk\freertos_demo.o: driverlib/sysctl.h
 .\rvmdk\freertos_demo.o: driverlib/uart.h
 .\rvmdk\freertos_demo.o: utils/uartstdio.h
-.\rvmdk\freertos_demo.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\rvmdk\freertos_demo.o: C:\Keil\ARM\ARMCC\bin\..\include\stdarg.h
 .\rvmdk\freertos_demo.o: led_task.h
 .\rvmdk\freertos_demo.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\freertos_demo.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\rvmdk\freertos_demo.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
 .\rvmdk\freertos_demo.o: .\FreeRTOSConfig.h
 .\rvmdk\freertos_demo.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\freertos_demo.o: FreeRTOS\Source\include\portable.h
