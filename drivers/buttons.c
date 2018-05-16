@@ -49,11 +49,15 @@
 #define SWITCHTASKSTACKSIZE 128
 
 extern xSemaphoreHandle xButtonPressedSemaphore;
+extern xSemaphoreHandle xEngineStartButtonPressedSemaphore;
 
 uint8_t INT_PIN_NUM;
 bool bCentralBtnDebounceReady;
+bool bEngineStartDebounceReady;
+bool bEngineStarted;
 
-void onButtonInt(void) {
+void
+onButtonInt(void) {
 
 	  //Get which pin interrupted
     INT_PIN_NUM = GPIOIntStatus(CentralBTNS_GPIO_PORT_BASE, false);
@@ -74,6 +78,20 @@ void onButtonInt(void) {
         xSemaphoreGiveFromISR(xButtonPressedSemaphore, & xHigherPTW);
         portEND_SWITCHING_ISR(xHigherPTW);
     }
+}
+
+
+
+
+void
+onEngineButtonInt(void) {
+		GPIOIntClear(EngineStartButton_GPIO_PORT_BASE, EngineStartButton); // Clear interrupt flag
+		if(!bEngineStartDebounceReady) //for debouncing engine button //If not ready to listen to button change, return.
+					return;
+		bEngineStartDebounceReady = false;
+		portBASE_TYPE xHigherPTW = pdFALSE;
+		xSemaphoreGiveFromISR(xEngineStartButtonPressedSemaphore, & xHigherPTW);
+		portEND_SWITCHING_ISR(xHigherPTW);
 }
 
 void
@@ -117,8 +135,8 @@ ButtonsInit(void) {
 		
 
     //enable Central Buttons pins, CentralBTNS_GPIO_PORT_BASE and pin numbers are defined at PORTS.h ////////////////////////////////////
-    ROM_SysCtlPeripheralEnable(CentralBTNS_SYSCTL_PERIPH_GPIO);                            //comment this line out if you're trying PF0 and PF4
-    GPIOPinTypeGPIOInput(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin); //comment this line out if you're trying PF0 and PF4
+    //ROM_SysCtlPeripheralEnable(CentralBTNS_SYSCTL_PERIPH_GPIO);                            //comment this line out if you're trying PF0 and PF4
+    //GPIOPinTypeGPIOInput(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin); //comment this line out if you're trying PF0 and PF4
     //Central Buttons INTERRUPT INIT //////////////////////////////////
     GPIOIntDisable(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin);
     GPIOIntTypeSet(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin, GPIO_BOTH_EDGES);
@@ -135,6 +153,17 @@ ButtonsInit(void) {
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2 , 0);
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
+		//Engine INIT ////////////////////////////////////////////////////////////////////////////////////////////
+    ROM_SysCtlPeripheralEnable(Engine_SYSCTL_PERIPH_GPIO);
+    GPIOPinTypeGPIOInput(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		//Engine Buttons INTERRUPT INIT //////////////////////////////////
+    GPIOIntDisable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
+    GPIOIntTypeSet(EngineStartButton_GPIO_PORT_BASE, EngineStartButton, GPIO_BOTH_EDGES);
+    GPIOIntEnable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
+    ////////////////////////////////////////////////////////////////////
+    GPIOIntRegister(EngineStartButton_GPIO_PORT_BASE, onEngineButtonInt);	//Link the method that is going to be called on the interrupt
 }
 
 //*****************************************************************************

@@ -10,7 +10,7 @@
       <TargetName>freertos_demo</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -149,7 +149,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>8</TargetSelection>
+          <TargetSelection>9</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -363,6 +363,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>0</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -450,6 +451,11 @@
               <FilePath>drivers\rgb.c</FilePath>
             </File>
             <File>
+              <FileName>buttons.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\buttons.c</FilePath>
+            </File>
+            <File>
               <FileName>startup_rvmdk.S</FileName>
               <FileType>2</FileType>
               <FilePath>.\startup_rvmdk.S</FilePath>
@@ -480,11 +486,6 @@
               <FilePath>.\switch_task.c</FilePath>
             </File>
             <File>
-              <FileName>buttons.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\buttons.c</FilePath>
-            </File>
-            <File>
               <FileName>LCD.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\LCD.c</FilePath>
@@ -503,6 +504,16 @@
               <FileName>android_listen.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\android_listen.c</FilePath>
+            </File>
+            <File>
+              <FileName>engine_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\engine_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>engine_task.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\engine_task.h</FilePath>
             </File>
           </Files>
         </Group>
