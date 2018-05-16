@@ -33,7 +33,7 @@
 #include "driverlib/uart.h"
 #include "utils/uartstdio.h"
 #include "led_task.h"
-#include "switch_task.h"
+//#include "switch_task.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -190,16 +190,26 @@ main(void)
         {
         }
     }
+		
+		if (statesTasksInit() != 0)
+		{
+				while(1)
+				{
+				}
+			
+		}
+		
+		
 
     //
     // Create the switch task.
     //
-    if(SwitchTaskInit() != 0)
+   /* if(SwitchTaskInit() != 0)
     {
         while(1)
         {
         }
-    }
+    }*/
 
     //
     // Start the scheduler.  This should not return.

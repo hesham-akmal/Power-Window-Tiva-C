@@ -30,23 +30,6 @@ extern bool androidINT;
 ///////////////////////////////////////
 
 
-struct State {
-    bool firstDelay;
-    bool bCentralAutoDownCheck;
-    bool bCentralAutoUpCheck;
-    bool bCentralBtnDownPressed;
-    bool bCentralBtnUpPressed;
-    unsigned long Next[4];
-};
-
-typedef const struct State StateType;
-#define neutral 0
-#define autoUp 1
-#define autoDown 2
-#define manualUp 3
-#define manualDown 4
-#define firstDelayDown 5
-#define firstDelayUp 6 //next state should be either auto up or manual up
 
 /*
 StateType FSM[5]={

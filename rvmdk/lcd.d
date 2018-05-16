@@ -1,6 +1,6 @@
 .\rvmdk\lcd.o: LCD.c
-.\rvmdk\lcd.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\rvmdk\lcd.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\rvmdk\lcd.o: C:\Keil\ARM\ARMCC\bin\..\include\stdbool.h
+.\rvmdk\lcd.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 .\rvmdk\lcd.o: tm4c123gh6pm.h
 .\rvmdk\lcd.o: driverlib/rom.h
 .\rvmdk\lcd.o: driverlib/sysctl.h
@@ -10,7 +10,7 @@
 .\rvmdk\lcd.o: driverlib/gpio.h
 .\rvmdk\lcd.o: drivers/buttons.h
 .\rvmdk\lcd.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\lcd.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\rvmdk\lcd.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
 .\rvmdk\lcd.o: .\FreeRTOSConfig.h
 .\rvmdk\lcd.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\lcd.o: FreeRTOS\Source\include\portable.h

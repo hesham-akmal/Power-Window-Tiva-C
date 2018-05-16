@@ -1,6 +1,6 @@
 .\rvmdk\switch_task.o: switch_task.c
-.\rvmdk\switch_task.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\rvmdk\switch_task.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\rvmdk\switch_task.o: C:\Keil\ARM\ARMCC\bin\..\include\stdbool.h
+.\rvmdk\switch_task.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 .\rvmdk\switch_task.o: inc/hw_memmap.h
 .\rvmdk\switch_task.o: inc/hw_types.h
 .\rvmdk\switch_task.o: inc/hw_gpio.h
@@ -9,10 +9,10 @@
 .\rvmdk\switch_task.o: driverlib/rom.h
 .\rvmdk\switch_task.o: drivers/buttons.h
 .\rvmdk\switch_task.o: utils/uartstdio.h
-.\rvmdk\switch_task.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\rvmdk\switch_task.o: C:\Keil\ARM\ARMCC\bin\..\include\stdarg.h
 .\rvmdk\switch_task.o: switch_task.h
 .\rvmdk\switch_task.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\switch_task.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\rvmdk\switch_task.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
 .\rvmdk\switch_task.o: .\FreeRTOSConfig.h
 .\rvmdk\switch_task.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\switch_task.o: FreeRTOS\Source\include\portable.h

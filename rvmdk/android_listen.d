@@ -1,6 +1,6 @@
 .\rvmdk\android_listen.o: android_listen.c
-.\rvmdk\android_listen.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\rvmdk\android_listen.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\rvmdk\android_listen.o: C:\Keil\ARM\ARMCC\bin\..\include\stdbool.h
+.\rvmdk\android_listen.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 .\rvmdk\android_listen.o: inc/hw_memmap.h
 .\rvmdk\android_listen.o: inc/hw_types.h
 .\rvmdk\android_listen.o: inc/hw_gpio.h
@@ -9,10 +9,10 @@
 .\rvmdk\android_listen.o: driverlib/rom.h
 .\rvmdk\android_listen.o: drivers/buttons.h
 .\rvmdk\android_listen.o: utils/uartstdio.h
-.\rvmdk\android_listen.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\rvmdk\android_listen.o: C:\Keil\ARM\ARMCC\bin\..\include\stdarg.h
 .\rvmdk\android_listen.o: switch_task.h
 .\rvmdk\android_listen.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\android_listen.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\rvmdk\android_listen.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
 .\rvmdk\android_listen.o: .\FreeRTOSConfig.h
 .\rvmdk\android_listen.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\android_listen.o: FreeRTOS\Source\include\portable.h

@@ -57,7 +57,7 @@ volatile bool bCentralBtnDownPressed;
 volatile bool bCentralBtnUpPressed;
 
 
-void RedLEDOn(void) {
+/*void RedLEDOn(void) {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
 }
 
@@ -136,7 +136,7 @@ void CentralBtnUpRelease(void) {
     Force_Window_Stop();
 
     LCD_print_string("Window neutral");
-}
+}*/
 
 
 //*****************************************************************************
@@ -144,7 +144,7 @@ void CentralBtnUpRelease(void) {
 // This task handles central button behaviour
 //
 //*****************************************************************************
-static void
+/*static void
 SwitchTask(void * pvParameters) {
 
     xSemaphoreTake(xButtonPressedSemaphore, 0);
@@ -220,7 +220,7 @@ SwitchTask(void * pvParameters) {
             androidINT = false; //reset
         }
     }
-}
+}*/
 
 //*****************************************************************************
 //
@@ -248,12 +248,12 @@ SwitchTaskInit(void) {
     //
     // Create the switch task.
     //
-    if (xTaskCreate(SwitchTask, (const portCHAR * )
+/*    if (xTaskCreate(SwitchTask, (const portCHAR * )
                     "Switch",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
                     PRIORITY_SWITCH_TASK, NULL) != pdTRUE) {
         return (1);
-    }
+    }*/
 
     //
     // Success.

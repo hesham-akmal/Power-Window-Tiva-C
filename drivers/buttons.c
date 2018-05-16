@@ -50,6 +50,9 @@
 
 extern xSemaphoreHandle xButtonPressedSemaphore;
 
+extern xSemaphoreHandle xCentralButtonUpSemaphore;
+extern xSemaphoreHandle xCentralButtonDownSemaphore;
+
 uint8_t INT_PIN_NUM;
 bool bCentralBtnDebounceReady;
 
@@ -62,7 +65,7 @@ void onButtonInt(void) {
 
 		//The following if statement is needed, as when a button is pressed, multiple strange interrupts could occur.
 		//We only need certain pin interrupts
-    if ( (INT_PIN_NUM & CentralBtnDownPin) || (INT_PIN_NUM &  CentralBtnUpPin) )
+   /* if ( (INT_PIN_NUM & CentralBtnDownPin) || (INT_PIN_NUM &  CentralBtnUpPin) )
     {
 				if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
 					return;
@@ -73,7 +76,32 @@ void onButtonInt(void) {
         portBASE_TYPE xHigherPTW = pdFALSE;
         xSemaphoreGiveFromISR(xButtonPressedSemaphore, & xHigherPTW);
         portEND_SWITCHING_ISR(xHigherPTW);
-    }
+    }*/
+		
+		if (INT_PIN_NUM & CentralBtnDownPin){
+				
+				if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
+					return;
+					
+				bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
+			
+				portBASE_TYPE xHigherPTW = pdFALSE;
+        xSemaphoreGiveFromISR(xCentralButtonDownSemaphore, & xHigherPTW);
+        portEND_SWITCHING_ISR(xHigherPTW);
+			
+		} else if (INT_PIN_NUM &  CentralBtnUpPin){
+			
+				if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
+					return;
+					
+				bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
+			
+				portBASE_TYPE xHigherPTW = pdFALSE;
+        xSemaphoreGiveFromISR(xCentralButtonUpSemaphore, & xHigherPTW);
+        portEND_SWITCHING_ISR(xHigherPTW);
+			
+		}
+		
 }
 
 void
