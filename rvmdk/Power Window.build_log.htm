@@ -2,87 +2,54 @@
 <body>
 <pre>
 <h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.24.2.0
+Copyright (C) 2017 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information:   ,  , LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.24.1
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 5 (build 528)
+Assembler:       Armasm.exe V5.06 update 5 (build 528)
+Linker/Locator:  ArmLink.exe V5.06 update 5 (build 528)
+Library Manager: ArmAr.exe V5.06 update 5 (build 528)
+Hex Converter:   FromElf.exe V5.06 update 5 (build 528)
+CPU DLL:         SARMCM3.DLL V5.24.1
+Dialog DLL:      DCM.DLL V1.16.0.0
+Target DLL:      lmidk-agdi.dll V???
+Dialog DLL:      TCM.DLL V1.32.0.0
+ 
 <h2>Project:</h2>
-C:\Keil\Powe Window\Power-Window-Tiva-C\Power Window.uvproj
-Project File Date:  05/15/2018
+C:\Users\hesha\Documents\GitHub\Power-Window-Tiva-C\Power Window.uvproj
+Project File Date:  05/16/2018
 
 <h2>Output:</h2>
-Build target 'freertos_demo'
+*** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Rebuild target 'freertos_demo'
+compiling heap_2.c...
+compiling list.c...
+compiling led_task.c...
+compiling port.c...
+compiling queue.c...
+compiling rgb.c...
+assembling startup_rvmdk.S...
+compiling ustdlib.c...
+compiling uartstdio.c...
+compiling tasks.c...
 compiling switch_task.c...
+compiling freertos_demo.c...
+compiling buttons.c...
+compiling android_listen.c...
 compiling states_tasks.c...
+compiling LCD.c...
 linking...
-Program Size: Code=7108 RO-data=972 RW-data=1644 ZI-data=30932  
+Program Size: Code=7208 RO-data=900 RW-data=1644 ZI-data=30932  
 After Build - User command #1: fromelf --bin --output .\rvmdk\Power Window.bin .\rvmdk\Power Window.axf
 Error: Q0466E: An output file can only be specified if there is a single input file
 Finished: 0 information, 0 warning and 1 error messages.
 ".\rvmdk\Power Window.axf" - 0 Error(s), 0 Warning(s).
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
-ction "CentralBtnUpRelease" declared implicitly
-                  CentralBtnUpRelease();
-switch_task.c(200): warning:  #223-D: function "AutoDown" declared implicitly
-                      AutoDown();
-switch_task.c(209): warning:  #223-D: function "AutoUp" declared implicitly
-                      AutoUp();
-switch_task.c: 6 warnings, 0 errors
-linking...
-.\rvmdk\Power Window.axf: Error: L6218E: Undefined symbol AutoDown (referred from switch_task.o).
-.\rvmdk\Power Window.axf: Error: L6218E: Undefined symbol AutoUp (referred from switch_task.o).
-.\rvmdk\Power Window.axf: Error: L6218E: Undefined symbol CentralBtnDownPress (referred from switch_task.o).
-.\rvmdk\Power Window.axf: Error: L6218E: Undefined symbol CentralBtnDownRelease (referred from switch_task.o).
-Not enough information to list image symbols.
-Finished: 1 information, 0 warning and 4 error messages.
-".\rvmdk\Power Window.axf" - 4 Error(s), 6 Warning(s).
-Target not created
-Finished: 2 information, 0 warning and 3 error messages.
-".\rvmdk\Power Window.axf" - 3 Error(s), 8 Warning(s).
-Target not created
-CentAutoDownTask" is undefined
-                if (xTaskCreate(CentAutoDownTask, (const portCHAR * )
-states_tasks.c(140): error:  #20: identifier "CentManualDownTask" is undefined
-                if (xTaskCreate(CentManualDownTask, (const portCHAR * )
-states_tasks.c(147): error:  #20: identifier "EmergencyTask" is undefined
-                if (xTaskCreate(EmergencyTask, (const portCHAR * )
-states_tasks.c(155): warning:  #223-D: function "semaphoresInit" declared implicitly
-                semaphoresInit();
-states_tasks.c(157): warning:  #940-D: missing return statement at end of non-void function "statesTasksInit"
-  }
-states_tasks.c(160): error:  #159: declaration is incompatible with previous "semaphoresInit" (declared at line 155)
-  semaphoresInit(void){
-states_tasks.c(167): warning:  #1-D: last line of file ends without a newline
-  }     
-states_tasks.c: 8 warnings, 11 errors
-".\rvmdk\Power Window.axf" - 11 Error(s), 8 Warning(s).
-Target not created
-ed
-                if (xTaskCreate(PassManualDownTask, (const portCHAR * )
-states_tasks.c(117): error:  #20: identifier "CentAutoUpTask" is undefined
-                if (xTaskCreate(CentAutoUpTask, (const portCHAR * )
-states_tasks.c(117): error:  #20: identifier "SWITCHTASKSTACKSIZE" is undefined
-                if (xTaskCreate(CentAutoUpTask, (const portCHAR * )
-states_tasks.c(124): error:  #20: identifier "CentAutoDownTask" is undefined
-                if (xTaskCreate(CentAutoDownTask, (const portCHAR * )
-states_tasks.c(124): error:  #20: identifier "SWITCHTASKSTACKSIZE" is undefined
-                if (xTaskCreate(CentAutoDownTask, (const portCHAR * )
-states_tasks.c(131): error:  #20: identifier "SWITCHTASKSTACKSIZE" is undefined
-                if (xTaskCreate(CentManualUpTask, (const portCHAR * )
-states_tasks.c(138): error:  #20: identifier "CentManualDownTask" is undefined
-                if (xTaskCreate(CentManualDownTask, (const portCHAR * )
-states_tasks.c(138): error:  #20: identifier "SWITCHTASKSTACKSIZE" is undefined
-                if (xTaskCreate(CentManualDownTask, (const portCHAR * )
-states_tasks.c(145): error:  #20: identifier "EmergencyTask" is undefined
-                if (xTaskCreate(EmergencyTask, (const portCHAR * )
-states_tasks.c(145): error:  #20: identifier "SWITCHTASKSTACKSIZE" is undefined
-                if (xTaskCreate(EmergencyTask, (const portCHAR * )
-states_tasks.c(153): warning:  #223-D: function "semaphoresInit" declared implicitly
-                semaphoresInit();
-states_tasks.c(155): warning:  #940-D: missing return statement at end of non-void function "statesTasksInit"
-  }
-states_tasks.c(158): error:  #159: declaration is incompatible with previous "semaphoresInit" (declared at line 153)
-  semaphoresInit(void){
-states_tasks.c(165): warning:  #1-D: last line of file ends without a newline
-  }     
-states_tasks.c: 8 warnings, 21 errors
-".\rvmdk\Power Window.axf" - 21 Error(s), 9 Warning(s).
-Target not created

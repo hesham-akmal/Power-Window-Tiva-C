@@ -84,6 +84,8 @@ void LCD_INIT(void) {
     LCD_command(0x38);      /* set 8-bit data, 2-line, 5x7 font */
     LCD_command(0x01);      /* clear screen, move cursor to home */
     LCD_command(0x0C);      /* turn on display, cursor off */
+		
+		LCD_print_string("LCD INITED");
 }
 
 void LCD_print_string(char * string) {

@@ -1,6 +1,6 @@
 .\rvmdk\led_task.o: led_task.c
-.\rvmdk\led_task.o: C:\Keil\ARM\ARMCC\bin\..\include\stdbool.h
-.\rvmdk\led_task.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\rvmdk\led_task.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\rvmdk\led_task.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\rvmdk\led_task.o: inc/hw_memmap.h
 .\rvmdk\led_task.o: inc/hw_types.h
 .\rvmdk\led_task.o: driverlib/gpio.h
@@ -8,11 +8,11 @@
 .\rvmdk\led_task.o: drivers/rgb.h
 .\rvmdk\led_task.o: drivers/buttons.h
 .\rvmdk\led_task.o: utils/uartstdio.h
-.\rvmdk\led_task.o: C:\Keil\ARM\ARMCC\bin\..\include\stdarg.h
+.\rvmdk\led_task.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 .\rvmdk\led_task.o: led_task.h
 .\rvmdk\led_task.o: priorities.h
 .\rvmdk\led_task.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\led_task.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
+.\rvmdk\led_task.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\rvmdk\led_task.o: .\FreeRTOSConfig.h
 .\rvmdk\led_task.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\led_task.o: FreeRTOS\Source\include\portable.h

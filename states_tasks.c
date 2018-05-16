@@ -65,7 +65,7 @@ void CentralBtnUpRelease(void) {
     LCD_print_string("Window neutral");
 }
 
-static void
+void
 CentManualUpTask (void * pvParameters){
 	
 	xSemaphoreTake(xCentralButtonUpSemaphore, 0);
@@ -73,6 +73,7 @@ CentManualUpTask (void * pvParameters){
 	while(1){
 		
 		xSemaphoreTake(xCentralButtonUpSemaphore, portMAX_DELAY);
+		
 		if (!centralBtnUpPressed)
 		{
 				CentralBtnUpPress();
@@ -157,7 +158,9 @@ statesTasksInit(void){
                     "Cent Manual Up",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
                     4, NULL) != pdTRUE) {
+				//failed to TaskCreate						
         return (1);
+				
     }
 										
 		/*if (xTaskCreate(CentManualDownTask, (const portCHAR * )
@@ -176,7 +179,7 @@ statesTasksInit(void){
 				
 		ButtonsInit();
 		semaphoresInit();
-		return(1);
+		return(0);
 										
 }
 

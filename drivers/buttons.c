@@ -48,7 +48,7 @@
 
 #define SWITCHTASKSTACKSIZE 128
 
-extern xSemaphoreHandle xButtonPressedSemaphore;
+//extern xSemaphoreHandle xButtonPressedSemaphore;
 
 extern xSemaphoreHandle xCentralButtonUpSemaphore;
 extern xSemaphoreHandle xCentralButtonDownSemaphore;
@@ -88,6 +88,7 @@ void onButtonInt(void) {
 				portBASE_TYPE xHigherPTW = pdFALSE;
         xSemaphoreGiveFromISR(xCentralButtonDownSemaphore, & xHigherPTW);
         portEND_SWITCHING_ISR(xHigherPTW);
+				return;
 			
 		} else if (INT_PIN_NUM &  CentralBtnUpPin){
 			
@@ -99,7 +100,7 @@ void onButtonInt(void) {
 				portBASE_TYPE xHigherPTW = pdFALSE;
         xSemaphoreGiveFromISR(xCentralButtonUpSemaphore, & xHigherPTW);
         portEND_SWITCHING_ISR(xHigherPTW);
-			
+				return;
 		}
 		
 }

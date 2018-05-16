@@ -233,7 +233,7 @@ SwitchTaskInit(void) {
     //
     // Create button semaphore
     //
-    xButtonPressedSemaphore = xSemaphoreCreateMutex();
+    //xButtonPressedSemaphore = xSemaphoreCreateMutex();
 
     //
     // Initialize the buttons

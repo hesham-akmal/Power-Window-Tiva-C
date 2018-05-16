@@ -1,6 +1,6 @@
 .\rvmdk\states_tasks.o: states_tasks.c
-.\rvmdk\states_tasks.o: C:\Keil\ARM\ARMCC\bin\..\include\stdbool.h
-.\rvmdk\states_tasks.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\rvmdk\states_tasks.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\rvmdk\states_tasks.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\rvmdk\states_tasks.o: inc/hw_memmap.h
 .\rvmdk\states_tasks.o: inc/hw_types.h
 .\rvmdk\states_tasks.o: inc/hw_gpio.h
@@ -9,11 +9,11 @@
 .\rvmdk\states_tasks.o: driverlib/rom.h
 .\rvmdk\states_tasks.o: drivers/buttons.h
 .\rvmdk\states_tasks.o: utils/uartstdio.h
-.\rvmdk\states_tasks.o: C:\Keil\ARM\ARMCC\bin\..\include\stdarg.h
+.\rvmdk\states_tasks.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 .\rvmdk\states_tasks.o: led_task.h
 .\rvmdk\states_tasks.o: priorities.h
 .\rvmdk\states_tasks.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\states_tasks.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
+.\rvmdk\states_tasks.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\rvmdk\states_tasks.o: .\FreeRTOSConfig.h
 .\rvmdk\states_tasks.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\states_tasks.o: FreeRTOS\Source\include\portable.h
