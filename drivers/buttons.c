@@ -1,28 +1,3 @@
-//*****************************************************************************
-//
-// buttons.c - Evaluation board driver for push buttons.
-//
-// Copyright (c) 2012-2017 Texas Instruments Incorporated.  All rights reserved.
-// Software License Agreement
-//
-// Texas Instruments (TI) is supplying this software for use solely and
-// exclusively on TI's microcontroller products. The software is owned by
-// TI and/or its suppliers, and is protected under applicable copyright
-// laws. You may not combine this software with "viral" open-source
-// software in order to form a larger program.
-//
-// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
-// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
-// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
-// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
-// DAMAGES, FOR ANY REASON WHATSOEVER.
-//
-// This is part of revision 2.1.4.178 of the EK-TM4C123GXL Firmware Package.
-//
-//*****************************************************************************
-
-
 #include <stdbool.h>
 #include <stdint.h>
 #include "inc/hw_types.h"
@@ -44,10 +19,9 @@
 #include "LCD.h"
 #include "states_tasks.h"
 
-
-////////////////////////////
-
 #define SWITCHTASKSTACKSIZE 128
+
+////////////////////////////////////////
 
 extern xSemaphoreHandle xCentralButtonUpSemaphore;
 extern xSemaphoreHandle xCentralButtonDownSemaphore;
@@ -63,76 +37,93 @@ void UnblockTaskWithSemaphore(xSemaphoreHandle x)
     portEND_SWITCHING_ISR(xHigherPTW);
 }
 
-void onButtonInt(void) {
+void onPowerBTNSPortInt(void) {
 
     //Get which pin interrupted
-    uint32_t INT_PIN_NUM = GPIOIntStatus(CentralBTNS_GPIO_PORT_BASE, false);
+    uint32_t INT_PIN_NUM = GPIOIntStatus(PowerBTNS_GPIO_PORT_BASE, false);
 
-    GPIOIntClear(CentralBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
+    GPIOIntClear(PowerBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
 
-    if (INT_PIN_NUM & CentralBtnDownPin)
+		androidINT = false; //not android interrupt
+
+    switch(INT_PIN_NUM)
     {
+
+    case CentralBtnDownPin :
 
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
 
-        bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
+        bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
         UnblockTaskWithSemaphore(xCentralButtonDownSemaphore);
 
-    } else if (INT_PIN_NUM &  CentralBtnUpPin) {
+        break;
+
+
+    case CentralBtnUpPin :
 
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
 
-        bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
+        bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
         UnblockTaskWithSemaphore(xCentralButtonUpSemaphore);
 
-    } else if (INT_PIN_NUM & EngineStartButton) {
+        break;
+
+
+    case PassengerBtnDownPin :
+
+        if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
+            return;
+
+        if( State == CentManualClosing || State == CentManualOpening ) //If Central is closing/opening
+            return;
+
+        bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
+
+        UnblockTaskWithSemaphore(xPassengerButtonDownSemaphore);
+
+        break;
+
+
+    case PassengerBtnUpPin :
+
+        if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
+            return;
+
+        if( State == CentManualClosing || State == CentManualOpening ) //If Central is closing/opening
+            return;
+
+        bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
+
+        UnblockTaskWithSemaphore(xPassengerButtonUpSemaphore);
+
+        break;
+
+    }
+
+}
+
+void onPortEInt(void) {
+
+    //Get which pin interrupted
+    uint32_t INT_PIN_NUM = GPIOIntStatus(GPIO_PORTE_BASE, false);
+
+    GPIOIntClear(GPIO_PORTE_BASE, INT_PIN_NUM); // Clear interrupt flag
+
+    switch(INT_PIN_NUM)
+    {
+
+    case EngineStartButton :
 
         UnblockTaskWithSemaphore(xEngineStartButtonPressedSemaphore);
 
+        break;
+
     }
-}
 
-void
-onPassButtonInt (void){
-		//Get which pin interrupted
-    INT_PIN_NUM = GPIOIntStatus(PowerBTNS_GPIO_PORT_BASE, false);
-		
-		GPIOIntClear(PowerBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
-		
-		if (State == Neutral){
-
-		//The following if statement is needed, as when a button is pressed, multiple strange interrupts could occur.
-		//We only need certain pin interrupts
-		
-			if (INT_PIN_NUM & PassengerBtnDownPin){
-					
-				if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
-					return;
-					
-				bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
-			
-				portBASE_TYPE xHigherPTW = pdFALSE;
-				xSemaphoreGiveFromISR(xPassengerButtonDownSemaphore, & xHigherPTW);
-				portEND_SWITCHING_ISR(xHigherPTW);
-				return;
-			
-		} else if (INT_PIN_NUM &  PassengerBtnUpPin){
-			
-				if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
-					return;
-					
-				bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
-			
-				portBASE_TYPE xHigherPTW = pdFALSE;
-				xSemaphoreGiveFromISR(xPassengerButtonUpSemaphore, & xHigherPTW);
-				portEND_SWITCHING_ISR(xHigherPTW);
-				return;
-		}
-	}
 }
 
 void
@@ -181,21 +172,18 @@ ButtonsInit(void) {
     GPIOIntTypeSet(PowerBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin, GPIO_BOTH_EDGES);
     GPIOIntEnable(PowerBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin);
     ////////////////////////////////////////////////////////////////////
-		
-		//enable Passenger Buttons pins, PassengerBTNS_GPIO_PORT_BASE and pin numbers are defined at PORTS.h ////////////////////////////////////
-    GPIOPinTypeGPIOInput(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin); //comment this line out if you're trying PF0 and PF4
+
+    //enable Passenger Buttons pins, PassengerBTNS_GPIO_PORT_BASE and pin numbers are defined at PORTS.h ////////////////////////////////////
+    GPIOPinTypeGPIOInput(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin);
     //Passenger Buttons INTERRUPT INIT //////////////////////////////////
     GPIOIntDisable(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin);
     GPIOIntTypeSet(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin, GPIO_BOTH_EDGES);
     GPIOIntEnable(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin);
     ////////////////////////////////////////////////////////////////////
-		
-		
-		
-    GPIOIntRegister(PowerBTNS_GPIO_PORT_BASE, onButtonInt);	//Link the method that is going to be called on the interrupt
-		GPIOIntRegister(PowerBTNS_GPIO_PORT_BASE, onPassButtonInt);	//Link the method that is going to be called on the interrupt
-		
-		bCentralBtnDebounceReady = true;
+
+    GPIOIntRegister(PowerBTNS_GPIO_PORT_BASE, onPowerBTNSPortInt);	//Link the method that is going to be called on the interrupt
+
+    bCentralBtnDebounceReady = true;
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Motor INIT ////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,6 +200,7 @@ ButtonsInit(void) {
     GPIOIntDisable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
     GPIOIntTypeSet(EngineStartButton_GPIO_PORT_BASE, EngineStartButton, GPIO_BOTH_EDGES );
     GPIOIntEnable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
+    GPIOIntRegister(EngineStartButton_GPIO_PORT_BASE, onPortEInt);	//Link the method that is going to be called on the interrupt
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

@@ -57,7 +57,7 @@ EngineOff(void)
 void
 CheckEngineSwitch()
 {
-//Reads switch on/off pin and apply function
+		//Reads switch on/off pin and apply function
     if( GPIOPinRead(EngineStartButton_GPIO_PORT_BASE,EngineStartButton) == 0 )
         EngineOn();
     else
@@ -74,6 +74,7 @@ EngineTask(void * pvParameters) {
         //Block till button interrupt gives semaphore back
         xSemaphoreTake(xEngineStartButtonPressedSemaphore, portMAX_DELAY);
 
+				//When unblocked, check if switch closed or opened
         CheckEngineSwitch();
     }
 }

@@ -22,32 +22,25 @@
 # define MotorPin2 GPIO_PIN_3
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////Engine Start Port
-# define Engine_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOC
-# define EngineStartButton_GPIO_PORT_BASE GPIO_PORTC_BASE
-# define EngineStartButton GPIO_PIN_7
+# define EngineStartButton_GPIO_PORT_BASE GPIO_PORTE_BASE
+# define EngineStartButton GPIO_PIN_0
 extern uint32_t EngineTaskInit(void);
 extern bool bEngineStarted;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-uint32_t ListenTaskInit(void);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //From buttons.c //////////////////////
-extern uint8_t INT_PIN_NUM;
 extern bool bCentralBtnDebounceReady;
 ///////////////////////////////////////
+
 //From android_listen.c ///////////////
 extern bool androidINT;
+uint32_t ListenTaskInit(void);
 ///////////////////////////////////////
+
 enum STATE{Neutral,
 					 CentManualOpening, CentManualClosing, 
-					 CentAutoOpening, CentAutoClosing, PassManualOpening, PassManualClosing, 
-					 PassAutoOpening, PassAutoClosing	};
-
-extern enum STATE State;
-
-enum STATE {Neutral,
-            CentManualOpening, CentManualClosing,
-            CentAutoOpening, CentAutoClosing
-           };
+					 PassManualOpening, PassManualClosing, 
+					 AutoOpening, AutoClosing	};
 
 extern enum STATE State;
 
