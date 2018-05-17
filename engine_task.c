@@ -34,34 +34,48 @@
 xSemaphoreHandle xEngineStartButtonPressedSemaphore;
 
 //From buttons.c //////////////////////
-extern volatile bool bEngineStartDebounceReady;
-extern volatile bool bEngineStarted;
+extern bool bEngineStartDebounceReady;
 ///////////////////////////////////////
 
-//*****************************************************************************
-//
-// This task handles engine state
-//
-//*****************************************************************************
+
+void
+EngineOn(void)
+{
+    bEngineStarted = true;
+    LCD_print_string("ENGINE ON");
+    UARTprintf("ENGINE ON\n");
+}
+
+void
+EngineOff(void)
+{
+    bEngineStarted = false;
+    LCD_print_string("ENGINE OFF");
+    UARTprintf("ENGINE OFF\n");
+}
+
+void
+CheckEngineSwitch()
+{
+//Reads switch on/off pin and apply function
+    if( GPIOPinRead(EngineStartButton_GPIO_PORT_BASE,EngineStartButton) == 0 )
+        EngineOn();
+    else
+        EngineOff();
+}
+
 void
 EngineTask(void * pvParameters) {
 
     xSemaphoreTake(xEngineStartButtonPressedSemaphore, 0);
-	
-    //
-    // Loop forever.
-    //
+
     while (1)
     {
         //Block till button interrupt gives semaphore back
         xSemaphoreTake(xEngineStartButtonPressedSemaphore, portMAX_DELAY);
-				
-				bEngineStarted = !bEngineStarted;
-			
-				Delay_ms(200);
-				
-				bEngineStartDebounceReady = true;
-		}
+
+        CheckEngineSwitch();
+    }
 }
 
 //*****************************************************************************
@@ -75,8 +89,9 @@ EngineTaskInit(void) {
     // Create button semaphore
     //
     xEngineStartButtonPressedSemaphore = xSemaphoreCreateMutex();
-		
-	
+
+    CheckEngineSwitch();
+
     //
     // Create the switch task.
     //

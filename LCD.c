@@ -58,21 +58,11 @@ void LCD_data(unsigned char data)
 void LCD_INIT(void) {
     ////////////////////////////////////////////////////////////////////////
     //Enable Clocks for LCD ctrl and LCD data
-    ROM_SysCtlPeripheralEnable(LCD_ctrl_SYSCTL_PERIPH_GPIO);
-    ROM_SysCtlPeripheralEnable(LCD_data_SYSCTL_PERIPH_GPIO);
+    ROM_SysCtlPeripheralEnable(LCD_ctrl_SYSCTL_PERIPH_GPIO | LCD_data_SYSCTL_PERIPH_GPIO);
     //Output init for LCD_ctrl
-    GPIOPinTypeGPIOOutput(LCD_ctrl_GPIO_PORT_BASE, LCD_ctrl_pin1);
-    GPIOPinTypeGPIOOutput(LCD_ctrl_GPIO_PORT_BASE, LCD_ctrl_pin2);
-    GPIOPinTypeGPIOOutput(LCD_ctrl_GPIO_PORT_BASE, LCD_ctrl_pin3);
+    GPIOPinTypeGPIOOutput(LCD_ctrl_GPIO_PORT_BASE, LCD_ctrl_pin1 | LCD_ctrl_pin2 | LCD_ctrl_pin3 );
     //Output init for LCD_data
-    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_0);
-    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_1);
-    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_2);
-    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_3);
-    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_4);
-    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_5);
-    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_6);
-    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_7);
+    GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 );
     ////////////////////////////////////////////////////////////////////////
 
     // Wake Up LCD Sequence
@@ -84,8 +74,6 @@ void LCD_INIT(void) {
     LCD_command(0x38);      /* set 8-bit data, 2-line, 5x7 font */
     LCD_command(0x01);      /* clear screen, move cursor to home */
     LCD_command(0x0C);      /* turn on display, cursor off */
-		
-		LCD_print_string("LCD INITED");
 }
 
 void LCD_print_string(char * string) {

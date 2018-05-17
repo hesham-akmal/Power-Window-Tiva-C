@@ -183,12 +183,6 @@ main(void)
     //
     UARTprintf("Welcome to our Power Window project!\n");
 		
-    if(EngineTaskInit() != 0)
-    {
-        while(1)
-        {
-        }
-    }
     
     if(ListenTaskInit() != 0)
     {
@@ -204,6 +198,14 @@ main(void)
 				}
 			
 		}
+		
+		
+    if(EngineTaskInit() != 0)
+    {
+        while(1)
+        {
+        }
+    }
 		
     //
     // Start the scheduler.  This should not return.
