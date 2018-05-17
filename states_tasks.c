@@ -8,7 +8,6 @@
 #include "driverlib/rom.h"
 #include "drivers/buttons.h"
 #include "utils/uartstdio.h"
-//#include "switch_task.h"
 #include "led_task.h"
 #include "priorities.h"
 #include "FreeRTOS.h"
@@ -21,7 +20,10 @@
 
 #define SWITCHTASKSTACKSIZE 128
 
+enum STATE State;
+
 volatile bool centralBtnUpPressed;
+volatile bool centralBtnDownPressed;
 
 xSemaphoreHandle xCentralButtonUpSemaphore;
 xSemaphoreHandle xCentralButtonDownSemaphore;
@@ -40,12 +42,21 @@ void Force_Window_Up(void) {
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin2, 0);
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN, MotorPinEN);
 }
-
+void Force_Window_Down(void) {
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin1, 0);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin2, MotorPin2);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN, MotorPinEN);
+}
 void Force_Window_Stop(void) {
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2, 0);
 }
 
+//////////////////////////////////////////////////////////
+
 void CentralBtnUpPress(void) {
+	
+		State = CentManualClosing;
+		
     UARTprintf("Window closing..\n");
 
     RedLEDOn();
@@ -56,6 +67,9 @@ void CentralBtnUpPress(void) {
 }
 
 void CentralBtnUpRelease(void) {
+		
+		State = Neutral;
+
     UARTprintf("Window neutral\n");
 
     RedLEDOff();
@@ -64,6 +78,54 @@ void CentralBtnUpRelease(void) {
 
     LCD_print_string("Window neutral");
 }
+
+void AutoUp(void) {
+	
+		State = CentAutoClosing;
+
+    UARTprintf("AUTO close window\n");
+
+    LCD_print_string("AUTO close");
+}
+
+//////////////////////////////////////////////////////////
+
+void CentralBtnDownPress(void) {
+
+		State = CentManualOpening;
+
+    UARTprintf("Window opening..\n");
+
+    RedLEDOn();
+
+    Force_Window_Down();
+
+    LCD_print_string("Window opening..");
+}
+
+void CentralBtnDownRelease(void) {
+
+		State = Neutral;
+		
+    UARTprintf("Window neutral\n");
+
+    RedLEDOff();
+
+    Force_Window_Stop();
+
+    LCD_print_string("Window neutral");
+}
+
+void AutoDown(void) {
+
+		State = CentAutoOpening;
+		
+    UARTprintf("AUTO open window\n");
+
+    LCD_print_string("AUTO open");
+}
+
+//////////////////////////////////////////////////////////
 
 void
 CentManualUpTask (void * pvParameters){
@@ -74,6 +136,10 @@ CentManualUpTask (void * pvParameters){
 		
 		xSemaphoreTake(xCentralButtonUpSemaphore, portMAX_DELAY);
 		
+		if(!bEngineStarted)
+			return;
+		
+		
 		if (!centralBtnUpPressed)
 		{
 				CentralBtnUpPress();
@@ -83,48 +149,74 @@ CentManualUpTask (void * pvParameters){
 		}
 
 		centralBtnUpPressed = !centralBtnUpPressed;
+		
 		Delay_ms(300);
+		
+		if ( !androidINT && 
+		State == CentManualClosing && 
+		GPIOPinRead(CentralBTNS_GPIO_PORT_BASE,CentralBtnUpPin) == 0) //Read if BtnDown still pressed
+                {
+                    AutoUp();
+                }
+								
 		bCentralBtnDebounceReady = true;
 	}
 	
+}
+
+//////////////////////////////////////////////////////////
+
+void
+CentManualDownTask (void * pvParameters){
 	
+	xSemaphoreTake(xCentralButtonDownSemaphore, 0);
+	
+	while(1){
+		
+		xSemaphoreTake(xCentralButtonDownSemaphore, portMAX_DELAY);
+		
+		if(!bEngineStarted)
+			return;
+			
+		if (!centralBtnDownPressed)
+		{
+				CentralBtnDownPress();
+		} else
+		{
+				CentralBtnDownRelease();
+		}
+
+		centralBtnDownPressed = !centralBtnDownPressed;
+		
+		Delay_ms(300);
+		
+		if ( !androidINT && 
+		State == CentManualOpening && 
+		GPIOPinRead(CentralBTNS_GPIO_PORT_BASE,CentralBtnDownPin) == 0) //Read if BtnDown still pressed
+                {
+                    AutoDown();
+                }
+								
+		bCentralBtnDebounceReady = true;
+	}
 	
 }
+
+//////////////////////////////////////////////////////////
 
 void
 semaphoresInit(void){
 	
 	xCentralButtonUpSemaphore = xSemaphoreCreateMutex();
 	xCentralButtonDownSemaphore = xSemaphoreCreateMutex();
-	
-	centralBtnUpPressed = false;
 
-}	
+}
 
 
 uint32_t
 statesTasksInit(void){
 	
-	/*if (xTaskCreate(NeutralTask, (const portCHAR * )
-                    "Neutral",
-                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    2, NULL) != pdTRUE) {
-        return (1);
-    }
-										
-		if (xTaskCreate(PassAutoUpTask, (const portCHAR * )
-                    "Pass Auto Up",
-                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    5, NULL) != pdTRUE) {
-        return (1);
-    }
-										
-		if (xTaskCreate(PassAutoDownTask, (const portCHAR * )
-                    "Pass Auto Down",
-                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    5, NULL) != pdTRUE) {
-        return (1);
-    }
+	/*
 										
 		if (xTaskCreate(PassManualUpTask, (const portCHAR * )
                     "Pass Manual Up",
@@ -139,20 +231,7 @@ statesTasksInit(void){
                     3, NULL) != pdTRUE) {
         return (1);
     }
-										
-		if (xTaskCreate(CentAutoUpTask, (const portCHAR * )
-                    "Cent Auto Up",
-                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    6, NULL) != pdTRUE) {
-        return (1);
-    }
-										
-		if (xTaskCreate(CentAutoDownTask, (const portCHAR * )
-                    "Cent Auto Down",
-                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    6, NULL) != pdTRUE) {
-        return (1);
-    }*/
+		*/
 										
 		if (xTaskCreate(CentManualUpTask, (const portCHAR * )
                     "Cent Manual Up",
@@ -163,13 +242,14 @@ statesTasksInit(void){
 				
     }
 										
-		/*if (xTaskCreate(CentManualDownTask, (const portCHAR * )
+		if (xTaskCreate(CentManualDownTask, (const portCHAR * )
                     "Cent Manual Down",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
                     4, NULL) != pdTRUE) {
+				//failed to TaskCreate		
         return (1);
     }
-										
+				/*						
 		if (xTaskCreate(EmergencyTask, (const portCHAR * )
                     "Emergency",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
@@ -177,9 +257,14 @@ statesTasksInit(void){
         return (1);
     }*/
 				
+	
+		centralBtnUpPressed = false;
+		centralBtnDownPressed = false;
+		
+		State = Neutral;	
+		
 		ButtonsInit();
 		semaphoresInit();
-		return(0);
-										
+		return(0);		
 }
 

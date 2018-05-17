@@ -425,11 +425,6 @@
               <FilePath>FreeRTOS\Source\portable\MemMang\heap_2.c</FilePath>
             </File>
             <File>
-              <FileName>led_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\led_task.c</FilePath>
-            </File>
-            <File>
               <FileName>list.c</FileName>
               <FileType>1</FileType>
               <FilePath>FreeRTOS\Source\list.c</FilePath>
@@ -508,6 +503,11 @@
               <FileName>states_tasks.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\states_tasks.c</FilePath>
+            </File>
+            <File>
+              <FileName>engine_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\engine_task.c</FilePath>
             </File>
           </Files>
         </Group>

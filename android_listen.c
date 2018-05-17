@@ -22,14 +22,23 @@
 
 #define SWITCHTASKSTACKSIZE 128 // Stack size in words
 
-extern uint8_t INT_PIN_NUM;
+extern xSemaphoreHandle xCentralButtonUpSemaphore;
+extern xSemaphoreHandle xCentralButtonDownSemaphore;
 bool androidINT;
 
 void
-UnblockSwitchTask(void)
+CentralButtonDown(void)
 {
     portBASE_TYPE xHigherPTW = pdFALSE;
-    xSemaphoreGiveFromISR(xButtonPressedSemaphore, & xHigherPTW);
+    xSemaphoreGiveFromISR(xCentralButtonDownSemaphore, & xHigherPTW);
+    portEND_SWITCHING_ISR(xHigherPTW);
+}
+
+void
+CentralButtonUp(void)
+{
+    portBASE_TYPE xHigherPTW = pdFALSE;
+    xSemaphoreGiveFromISR(xCentralButtonUpSemaphore, & xHigherPTW);
     portEND_SWITCHING_ISR(xHigherPTW);
 }
 
@@ -45,13 +54,11 @@ ListenTask(void * pvParameters) {
         switch(command)
         {
         case 'c' :
-            INT_PIN_NUM = CentralBtnDownPin;
-            UnblockSwitchTask();
+            CentralButtonUp();
             break;
 
         case 'd' :
-            INT_PIN_NUM = CentralBtnUpPin;
-            UnblockSwitchTask();
+            CentralButtonDown();
             break;
 
         case 'b' :

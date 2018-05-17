@@ -19,6 +19,13 @@
 # define MotorPin1 GPIO_PIN_2
 # define MotorPin2 GPIO_PIN_3
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////Engine Start Port
+# define Engine_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOA
+# define EngineStartButton_GPIO_PORT_BASE GPIO_PORTA_BASE
+# define EngineStartButton GPIO_PIN_2
+extern uint32_t EngineTaskInit(void);
+extern volatile bool bEngineStarted;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 uint32_t ListenTaskInit(void);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //From buttons.c //////////////////////
@@ -29,6 +36,11 @@ extern bool bCentralBtnDebounceReady;
 extern bool androidINT;
 ///////////////////////////////////////
 
+enum STATE{Neutral,
+					 CentManualOpening, CentManualClosing, 
+					 CentAutoOpening, CentAutoClosing	};
+
+extern enum STATE State;
 
 
 /*

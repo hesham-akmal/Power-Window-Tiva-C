@@ -33,7 +33,6 @@
 #include "driverlib/uart.h"
 #include "utils/uartstdio.h"
 #include "led_task.h"
-//#include "switch_task.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -184,6 +183,12 @@ main(void)
     //
     UARTprintf("Welcome to our Power Window project!\n");
 		
+    if(EngineTaskInit() != 0)
+    {
+        while(1)
+        {
+        }
+    }
     
     if(ListenTaskInit() != 0)
     {
@@ -200,18 +205,6 @@ main(void)
 			
 		}
 		
-		
-
-    //
-    // Create the switch task.
-    //
-   /* if(SwitchTaskInit() != 0)
-    {
-        while(1)
-        {
-        }
-    }*/
-
     //
     // Start the scheduler.  This should not return.
     //

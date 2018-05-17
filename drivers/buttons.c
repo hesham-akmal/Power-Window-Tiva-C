@@ -48,18 +48,18 @@
 
 #define SWITCHTASKSTACKSIZE 128
 
-//extern xSemaphoreHandle xButtonPressedSemaphore;
-
 extern xSemaphoreHandle xCentralButtonUpSemaphore;
 extern xSemaphoreHandle xCentralButtonDownSemaphore;
+extern xSemaphoreHandle xEngineStartButtonPressedSemaphore;
 
-uint8_t INT_PIN_NUM;
 bool bCentralBtnDebounceReady;
+volatile bool bEngineStartDebounceReady = true;
+volatile bool bEngineStarted = true;
 
 void onButtonInt(void) {
 
 	  //Get which pin interrupted
-    INT_PIN_NUM = GPIOIntStatus(CentralBTNS_GPIO_PORT_BASE, false);
+    uint8_t INT_PIN_NUM = GPIOIntStatus(CentralBTNS_GPIO_PORT_BASE, false);
 		
 		GPIOIntClear(CentralBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
 
@@ -103,6 +103,25 @@ void onButtonInt(void) {
 				return;
 		}
 		
+}
+
+void
+onEngineButtonInt(void) {
+
+		uint8_t INT_PIN_NUM = GPIOIntStatus(EngineStartButton_GPIO_PORT_BASE, false);
+		
+		GPIOIntClear(EngineStartButton_GPIO_PORT_BASE, INT_PIN_NUM);
+		
+		if ( (INT_PIN_NUM & EngineStartButton) && 
+					bEngineStartDebounceReady) //for debouncing engine button.
+		{
+			bEngineStartDebounceReady = false;
+			
+			bEngineStarted = !bEngineStarted;
+			//portBASE_TYPE xHigherPTW = pdFALSE;
+			//xSemaphoreGiveFromISR(xEngineStartButtonPressedSemaphore, & xHigherPTW);
+			//portEND_SWITCHING_ISR(xHigherPTW);
+		}
 }
 
 void
@@ -163,6 +182,17 @@ ButtonsInit(void) {
     GPIOPinTypeGPIOOutput(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2);
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2 , 0);
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		//Engine INIT ////////////////////////////////////////////////////////////////////////////////////////////
+    ROM_SysCtlPeripheralEnable(Engine_SYSCTL_PERIPH_GPIO);
+    GPIOPinTypeGPIOInput(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
+		//Engine Buttons INTERRUPT INIT ////////////////////////////
+    GPIOIntDisable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
+    GPIOIntTypeSet(EngineStartButton_GPIO_PORT_BASE, EngineStartButton, GPIO_BOTH_EDGES );
+    GPIOIntEnable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
+    ////////////////////////////////////////////////////////////////////
+    GPIOIntRegister(EngineStartButton_GPIO_PORT_BASE, onEngineButtonInt);	//Link the method that is going to be called on the interrupt
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 }
 
