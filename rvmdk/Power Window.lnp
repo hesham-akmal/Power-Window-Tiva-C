@@ -1,0 +1,21 @@
+--cpu=Cortex-M4.fp
+".\rvmdk\queue.o"
+".\rvmdk\heap_2.o"
+".\rvmdk\list.o"
+".\rvmdk\port.o"
+".\rvmdk\rgb.o"
+".\rvmdk\startup_rvmdk.o"
+".\rvmdk\tasks.o"
+".\rvmdk\uartstdio.o"
+".\rvmdk\buttons.o"
+".\rvmdk\ustdlib.o"
+".\rvmdk\freertos_demo.o"
+".\rvmdk\android_listen.o"
+".\rvmdk\lcd.o"
+".\rvmdk\states_tasks.o"
+".\rvmdk\engine_task.o"
+"driverlib\rvmdk\driverlib.lib"
+--library_type=microlib --strict --scatter "freertos_demo.sct"
+--entry Reset_Handler --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\rvmdk\Power Window.map" -o ".\rvmdk\Power Window.axf"
