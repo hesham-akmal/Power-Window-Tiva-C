@@ -1,13 +1,17 @@
 package com.supreme.abc.powerwindowservice;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Network;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -31,46 +35,53 @@ import android.widget.Toast;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Type;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     public static TextView statusText;
 
     public static Socket socket;
     public static ObjectOutputStream oos;
     public static ObjectInputStream ois;
-    private boolean engineOn = false;
+    private Vibrator v;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.content_main);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         statusText =  findViewById(R.id.statusText);
+
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         final EditText input = new EditText(this);
         input.setText("192.168.");
         setIPfilter(input);
 
         ///Power windows ctrl btns ///////////////////////////////////////////////////
-        ImageButton upBtn =  findViewById(R.id.upBtn);
-        ImageButton downBtn =  findViewById(R.id.downBtn);
+        final ImageButton upBtn =  findViewById(R.id.upBtn);
+        final ImageButton downBtn =  findViewById(R.id.downBtn);
 
         upBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        vibrate();
                         // PRESSED
+                        upBtn.setBackgroundResource(R.drawable.upgreen);
                         new SendChar('c').executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         return true;
                     case MotionEvent.ACTION_UP:
+                        vibrate();
                         // RELEASED
+                        upBtn.setBackgroundResource(R.drawable.up);
                         new SendChar('c').executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         return true;
                 }
@@ -83,39 +94,25 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        vibrate();
                         new SendChar('d').executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        upBtn.setBackgroundResource(R.drawable.upgreen);
                         return true;
                     case MotionEvent.ACTION_UP:
+                        vibrate();
                         // RELEASED
                         new SendChar('d').executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        upBtn.setBackgroundResource(R.drawable.up);
                         return true;
                 }
                 return false;
             }
         });
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        final Button button = findViewById(R.id.engineBtn);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(engineOn)
-                {
-                    new SendChar('b').executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    engineOn = false;
-                }
-                else
-                {
-                    new SendChar('b').executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    engineOn = true;
-                }
-            }
-        });
-
-        //////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///
         /// //Get IP and start Connection
-        new AlertDialog.Builder(this)
+        /*new AlertDialog.Builder(this)
                 .setTitle("Update Status")
                 .setMessage("Enter Server IP")
                 .setView(input)
@@ -123,10 +120,18 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         new Network(input.getText().toString());
                     }
-                }).show();
+                }).show();*/
+        new Network("192.168.1.8");
 
-        //new Network("192.168.1.8");
+    }
 
+    void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(70,VibrationEffect.DEFAULT_AMPLITUDE));
+        }else{
+            //deprecated in API 26
+            v.vibrate(70);
+        }
     }
 
     static class Network extends AsyncTask<String, String, Void> {
@@ -136,36 +141,58 @@ public class MainActivity extends AppCompatActivity {
 
         public Network(String MainServerIP) {
             this.MainServerIP = MainServerIP;
-            Log.v("XXX",MainServerIP);
+            Log.v("A",MainServerIP);
             executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         @Override
         protected Void doInBackground(String... s) {
+
+            boolean connectAgain = true;
+            publishProgress("Connecting to server..");
+
+            while(connectAgain) {
+                try {
+                    //Connect to Server
+                    socket = new Socket();
+                    socket.connect(new InetSocketAddress(MainServerIP, MainServerPORT), 3000);
+                    publishProgress("Connection Established");
+                    Log.v("XXX","WOW??");
+                    connectAgain = false;
+                } catch (Exception e) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+
             try {
-                //Connect to Server
-                Log.v("XXX","CONNECTING");
-                socket = new Socket(MainServerIP, MainServerPORT);
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 ois = new ObjectInputStream(socket.getInputStream());
-                Log.v("XXX","SUCCESS");
-                ////
+
+                //send android connection successful
+                new SendChar('a').executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 ////Continously listen to messages being sent from server
-                while (true) {
+                while (true)
+                {
                     String c = (String) ois.readObject();
                     //publish on UI thread
                     publishProgress(c);
                 }
-            } catch (Exception e) {
+
+            }catch (Exception e) {
                 e.printStackTrace();
             }
+
             return null;
         }
 
         @Override
         protected void onProgressUpdate(String... msgs) {
-            Log.v("AAA",msgs[0]);
+            Log.v("A",msgs[0]);
             statusText.setText(msgs[0]);
         }
     }
@@ -187,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
-
 
     void setIPfilter(EditText et){
         InputFilter[] filters = new InputFilter[1];

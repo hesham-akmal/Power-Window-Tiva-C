@@ -52,12 +52,20 @@ public class Server extends Thread {
 
     public static void main(String[] args) {
 
+        String COMNAME = "COM3";
+        int Buad = 115200;
+
         ServerSocket server = null;
 
-        try {
-            new TwoWaySerialComm().connect("COM3", 115200); //connect to com port
-        } catch (Exception ex) {
-            System.out.println("TIVA COM NOT DETECTED. ERROR AT TwoWaySerialComm connect");
+        System.out.println("Connecting to TIVA on " + COMNAME
+        + " with Baud Rate: " + Buad);
+
+        while (true) {
+            try {
+                new TwoWaySerialComm().connect(COMNAME, Buad); //connect to com port
+                break;
+            } catch (Exception ex) {
+            }
         }
 
         try {

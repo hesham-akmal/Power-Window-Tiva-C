@@ -18,6 +18,7 @@
 #include "semphr.h"
 #include "PORTS.h"
 #include "LCD.h"
+#include "utils/uartstdio.h"
 
 
 #define SWITCHTASKSTACKSIZE 128 // Stack size in words
@@ -26,6 +27,18 @@ extern xSemaphoreHandle xCentralButtonUpSemaphore;
 extern xSemaphoreHandle xCentralButtonDownSemaphore;
 
 bool androidINT;
+
+////////////////////////////////////////////////////////////
+/*
+
+Android commands characters:
+
+a: android connected 
+c: close window pressed/release
+d: open window pressed/release
+
+*/
+////////////////////////////////////////////////////////////
 
 void
 CentralButtonDown(void)
@@ -62,8 +75,8 @@ ListenTask(void * pvParameters) {
             CentralButtonDown();
             break;
 
-        case 'b' :
-            //engine on/off
+        case 'a' :
+            LCD_print_string("AndroidConnected");
             break;
         }
     }

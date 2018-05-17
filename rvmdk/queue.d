@@ -1,4 +1,4 @@
-.\rvmdk\queue.o: queue.c
+.\rvmdk\queue.o: FreeRTOS\Source\queue.c
 .\rvmdk\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\rvmdk\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\rvmdk\queue.o: FreeRTOS\Source\include\FreeRTOS.h

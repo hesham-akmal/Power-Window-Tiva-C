@@ -39,7 +39,7 @@ public class TwoWaySerialComm {
         InputStream in;
 
         public SerialReader(InputStream in) {
-            System.out.println("Listening to tiva..");
+            System.out.println("Tiva connection successful");
             this.in = in;
         }
 
