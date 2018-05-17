@@ -23,10 +23,17 @@
 enum STATE State;
 
 volatile bool centralBtnUpPressed;
+volatile bool passengerBtnUpPressed;
+volatile bool passengerBtnDownPressed;
 volatile bool centralBtnDownPressed;
+
+enum STATE State;
 
 xSemaphoreHandle xCentralButtonUpSemaphore;
 xSemaphoreHandle xCentralButtonDownSemaphore;
+					 
+xSemaphoreHandle xPassengerButtonUpSemaphore;
+xSemaphoreHandle xPassengerButtonDownSemaphore;
 
 void RedLEDOn(void) {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
@@ -50,6 +57,11 @@ void Force_Window_Down(void) {
 void Force_Window_Stop(void) {
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2, 0);
 }
+void Force_Window_Down(void) {
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin1, 0);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPin2, MotorPin2);
+    GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN, MotorPinEN);
+}
 
 //////////////////////////////////////////////////////////
 
@@ -59,7 +71,13 @@ void CentralBtnUpPress(void) {
 
     UARTprintf("Window closing..\n");
 
-    RedLEDOn();
+    Force_Window_Up();
+
+    LCD_print_string("Window closing..");
+}
+
+void PassengerBtnUpPress(void) {
+    UARTprintf("Window closing..\n");
 
     Force_Window_Up();
 
@@ -70,6 +88,32 @@ void CentralBtnUpRelease(void) {
 
     State = Neutral;
 
+    UARTprintf("Window neutral\n");
+
+    Force_Window_Stop();
+
+    LCD_print_string("Window neutral");
+}
+void CentralBtnDownPress(void) {
+    UARTprintf("Window opening..\n");
+
+    RedLEDOn();
+
+    Force_Window_Down();
+
+    LCD_print_string("Window opening..");
+}
+void PassengerBtnDownPress(void) {
+    UARTprintf("Window opening..\n");
+
+    RedLEDOn();
+
+    Force_Window_Down();
+
+    LCD_print_string("Window opening..");
+}
+
+void BtnDownRelease(void) {
     UARTprintf("Window neutral\n");
 
     RedLEDOff();
@@ -165,13 +209,57 @@ CentManualUpTask (void * pvParameters) {
     }
 
 }
+void 
+PassManualUpTask (void * pvParameters){
+		xSemaphoreTake(xPassengerButtonUpSemaphore, portMAX_DELAY);
+		
+		if (!passengerBtnUpPressed)
+		{
+				PassengerBtnUpPress();
+				State = PassManualClosing;
+		} else
+		{
+				BtnUpRelease();
+				State = Neutral;
+		}
 
-//////////////////////////////////////////////////////////
+		passengerBtnUpPressed = !passengerBtnUpPressed;
+		Delay_ms(300);
+		bCentralBtnDebounceReady = true;
+	}
+
+
+void 
+PassManualDownTask (void * pvParameters){
+		xSemaphoreTake(xPassengerButtonDownSemaphore, portMAX_DELAY);
+		
+		if (!passengerBtnDownPressed)
+		{
+				PassengerBtnDownPress();
+				State = PassManualOpening;
+		} else
+		{
+				BtnDownRelease();
+				State = Neutral;
+		}
+
+		passengerBtnDownPressed = !passengerBtnDownPressed;
+		Delay_ms(300);
+		bCentralBtnDebounceReady = true;
+	}
+
 
 void
-CentManualDownTask (void * pvParameters) {
-
-    xSemaphoreTake(xCentralButtonDownSemaphore, 0);
+semaphoresInit(void){
+	
+	xCentralButtonUpSemaphore = xSemaphoreCreateMutex();
+	xCentralButtonDownSemaphore = xSemaphoreCreateMutex();
+	centralBtnUpPressed = false;
+	
+	xPassengerButtonUpSemaphore = xSemaphoreCreateMutex();
+	xPassengerButtonDownSemaphore = xSemaphoreCreateMutex();
+	passengerBtnUpPressed = false;
+}	
 
     while(1) {
 
@@ -263,8 +351,6 @@ statesTasksInit(void) {
     }*/
 
 
-    centralBtnUpPressed = false;
-    centralBtnDownPressed = false;
 
     State = Neutral;
 

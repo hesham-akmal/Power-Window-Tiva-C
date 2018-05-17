@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////Central Buttons Port and Pins
-#define CentralBTNS_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOC
-#define CentralBTNS_GPIO_PORT_BASE GPIO_PORTC_BASE
+#define PowerBTNS_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOC
+#define PowerBTNS_GPIO_PORT_BASE GPIO_PORTC_BASE
 #define CentralBtnDownPin GPIO_PIN_4
 #define CentralBtnUpPin GPIO_PIN_5
+#define PassengerBtnDownPin GPIO_PIN_6
+#define PassengerBtnUpPin GPIO_PIN_7
 //////////////////////
 /*
 //trying with PF0 and PF4 for Central Buttons
@@ -35,6 +37,12 @@ extern bool bCentralBtnDebounceReady;
 //From android_listen.c ///////////////
 extern bool androidINT;
 ///////////////////////////////////////
+enum STATE{Neutral,
+					 CentManualOpening, CentManualClosing, 
+					 CentAutoOpening, CentAutoClosing, PassManualOpening, PassManualClosing, 
+					 PassAutoOpening, PassAutoClosing	};
+
+extern enum STATE State;
 
 enum STATE {Neutral,
             CentManualOpening, CentManualClosing,
@@ -44,11 +52,4 @@ enum STATE {Neutral,
 extern enum STATE State;
 
 
-/*
-StateType FSM[5]={
- {false,false, false, false, false, {goN,waitN,goN,waitN}},  //next states should be firstDelay Down/up
- {0x22, 500,{goE,goE,goE,goE}},
- {0x0C,3000,{goE,goE,waitE,waitE}},
- {0x14, 500,{goN,goN,goN,goN}},
- {true, true, false, true, false, {goN,goN,goN,goN}}};*/
 

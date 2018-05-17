@@ -1,6 +1,6 @@
 .\rvmdk\buttons.o: drivers\buttons.c
-.\rvmdk\buttons.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\rvmdk\buttons.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\rvmdk\buttons.o: C:\Keil\ARM\ARMCC\bin\..\include\stdbool.h
+.\rvmdk\buttons.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 .\rvmdk\buttons.o: .\inc/hw_types.h
 .\rvmdk\buttons.o: .\inc/hw_memmap.h
 .\rvmdk\buttons.o: .\inc/hw_gpio.h
@@ -11,10 +11,10 @@
 .\rvmdk\buttons.o: .\driverlib/gpio.h
 .\rvmdk\buttons.o: .\drivers/buttons.h
 .\rvmdk\buttons.o: .\utils/uartstdio.h
-.\rvmdk\buttons.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\rvmdk\buttons.o: C:\Keil\ARM\ARMCC\bin\..\include\stdarg.h
 .\rvmdk\buttons.o: .\PORTS.h
 .\rvmdk\buttons.o: FreeRTOS\Source\include\FreeRTOS.h
-.\rvmdk\buttons.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\rvmdk\buttons.o: C:\Keil\ARM\ARMCC\bin\..\include\stddef.h
 .\rvmdk\buttons.o: .\FreeRTOSConfig.h
 .\rvmdk\buttons.o: FreeRTOS\Source\include\projdefs.h
 .\rvmdk\buttons.o: FreeRTOS\Source\include\portable.h
@@ -26,3 +26,4 @@
 .\rvmdk\buttons.o: .\priorities.h
 .\rvmdk\buttons.o: .\driverlib/interrupt.h
 .\rvmdk\buttons.o: .\LCD.h
+.\rvmdk\buttons.o: .\states_tasks.h

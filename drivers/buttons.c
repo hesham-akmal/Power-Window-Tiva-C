@@ -42,6 +42,7 @@
 #include "priorities.h"
 #include "driverlib/interrupt.h"
 #include "LCD.h"
+#include "states_tasks.h"
 
 
 ////////////////////////////
@@ -96,6 +97,45 @@ void onButtonInt(void) {
 }
 
 void
+onPassButtonInt (void){
+		//Get which pin interrupted
+    INT_PIN_NUM = GPIOIntStatus(PowerBTNS_GPIO_PORT_BASE, false);
+		
+		GPIOIntClear(PowerBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
+		
+		if (State == Neutral){
+
+		//The following if statement is needed, as when a button is pressed, multiple strange interrupts could occur.
+		//We only need certain pin interrupts
+		
+			if (INT_PIN_NUM & PassengerBtnDownPin){
+					
+				if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
+					return;
+					
+				bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
+			
+				portBASE_TYPE xHigherPTW = pdFALSE;
+				xSemaphoreGiveFromISR(xPassengerButtonDownSemaphore, & xHigherPTW);
+				portEND_SWITCHING_ISR(xHigherPTW);
+				return;
+			
+		} else if (INT_PIN_NUM &  PassengerBtnUpPin){
+			
+				if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
+					return;
+					
+				bCentralBtnDebounceReady = false; //If ready, set it to false, until Switch Task sets it to true again.
+			
+				portBASE_TYPE xHigherPTW = pdFALSE;
+				xSemaphoreGiveFromISR(xPassengerButtonUpSemaphore, & xHigherPTW);
+				portEND_SWITCHING_ISR(xHigherPTW);
+				return;
+		}
+	}
+}
+
+void
 ButtonsInit(void) {
     //*************************************************************************************************************
     //
@@ -134,14 +174,29 @@ ButtonsInit(void) {
 
 
     //enable Central Buttons pins, CentralBTNS_GPIO_PORT_BASE and pin numbers are defined at PORTS.h ////////////////////////////////////
-    ROM_SysCtlPeripheralEnable(CentralBTNS_SYSCTL_PERIPH_GPIO);                            //comment this line out if you're trying PF0 and PF4
-    GPIOPinTypeGPIOInput(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin); //comment this line out if you're trying PF0 and PF4
+    ROM_SysCtlPeripheralEnable(PowerBTNS_SYSCTL_PERIPH_GPIO);                            //comment this line out if you're trying PF0 and PF4
+    GPIOPinTypeGPIOInput(PowerBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin); //comment this line out if you're trying PF0 and PF4
     //Central Buttons INTERRUPT INIT //////////////////////////////////
-    GPIOIntDisable(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin);
-    GPIOIntTypeSet(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin, GPIO_BOTH_EDGES);
-    GPIOIntEnable(CentralBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin);
-    GPIOIntRegister(CentralBTNS_GPIO_PORT_BASE, onButtonInt);	//Link the method that is going to be called on the interrupt
-    bCentralBtnDebounceReady = true;
+    GPIOIntDisable(PowerBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin);
+    GPIOIntTypeSet(PowerBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin, GPIO_BOTH_EDGES);
+    GPIOIntEnable(PowerBTNS_GPIO_PORT_BASE, CentralBtnDownPin | CentralBtnUpPin);
+    ////////////////////////////////////////////////////////////////////
+		
+		//enable Passenger Buttons pins, PassengerBTNS_GPIO_PORT_BASE and pin numbers are defined at PORTS.h ////////////////////////////////////
+    GPIOPinTypeGPIOInput(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin); //comment this line out if you're trying PF0 and PF4
+    //Passenger Buttons INTERRUPT INIT //////////////////////////////////
+    GPIOIntDisable(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin);
+    GPIOIntTypeSet(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin, GPIO_BOTH_EDGES);
+    GPIOIntEnable(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin);
+    ////////////////////////////////////////////////////////////////////
+		
+		
+		
+    GPIOIntRegister(PowerBTNS_GPIO_PORT_BASE, onButtonInt);	//Link the method that is going to be called on the interrupt
+		GPIOIntRegister(PowerBTNS_GPIO_PORT_BASE, onPassButtonInt);	//Link the method that is going to be called on the interrupt
+		
+		bCentralBtnDebounceReady = true;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Motor INIT ////////////////////////////////////////////////////////////////////////////////////////////
     ROM_SysCtlPeripheralEnable(Motor_SYSCTL_PERIPH_GPIO);
