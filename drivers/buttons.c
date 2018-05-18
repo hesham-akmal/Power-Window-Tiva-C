@@ -10,7 +10,6 @@
 #include "driverlib/gpio.h"
 #include "drivers/buttons.h"
 #include "utils/uartstdio.h"
-#include "PORTS.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "semphr.h"
@@ -18,16 +17,11 @@
 #include "driverlib/interrupt.h"
 #include "LCD.h"
 #include "states_tasks.h"
+#include "PORTS.h"
 
 #define SWITCHTASKSTACKSIZE 128
 
 ////////////////////////////////////////
-
-extern xSemaphoreHandle xCentralButtonUpSemaphore;
-extern xSemaphoreHandle xCentralButtonDownSemaphore;
-extern xSemaphoreHandle xEngineStartButtonPressedSemaphore;
-extern xSemaphoreHandle xPassengLockSemaphore;
-extern xSemaphoreHandle xJamSemaphore;
 
 bool bCentralBtnDebounceReady;
 bool passLocked;
@@ -50,28 +44,29 @@ void onLimitSwitchesInt(void) {
     GPIOIntClear(Limits_GPIO_PORT_BASE, INT_PIN_NUM_SWITCH); // Clear interrupt flag
 
     androidINT = false; //not android interrupt
+		
+		if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
+				return;
+		bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
     switch(INT_PIN_NUM_SWITCH)
     {
-    case WindowUpLimitPin:
-        if (State == FullyClosed)
-            State = Neutral;
-        else
-            LimitSwitchUp();
+			case WindowUpLimitPin:
+					
+					UnblockTaskWithSemaphore(xWindowFullUpSemaphore);
+					
+					break;
 
-        break;
-
-    case WindowDownLimitPin:
-        if (State == FullyOpened)
-            State = Neutral;
-        else
-            LimitSwitchDown();
-
-        break;
+			case WindowDownLimitPin:
+			
+					UnblockTaskWithSemaphore(xWindowFullDownSemaphore);
+				 
+					break;
     }
 
 }
 
+////////////////////////////////////////////////////////////////////////////
 
 void onPowerBTNSPortInt(void) {
 
@@ -81,19 +76,15 @@ void onPowerBTNSPortInt(void) {
     GPIOIntClear(PowerBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
 
     androidINT = false; //not android interrupt
+		
+    if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
+        return;
+    bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
     switch(INT_PIN_NUM)
     {
 
     case CentralBtnDownPin :
-
-        if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
-            return;
-
-        if (State == FullyOpened)
-            return;
-
-        bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
         UnblockTaskWithSemaphore(xCentralButtonDownSemaphore);
 
@@ -102,14 +93,6 @@ void onPowerBTNSPortInt(void) {
 
     case CentralBtnUpPin :
 
-        if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
-            return;
-
-        if (State == FullyClosed)
-            return;
-
-        bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
-
         UnblockTaskWithSemaphore(xCentralButtonUpSemaphore);
 
         break;
@@ -117,28 +100,12 @@ void onPowerBTNSPortInt(void) {
 
     case PassengerBtnDownPin :
 
-        if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
-            return;
-
-        if( State == CentManualClosing || State == CentManualOpening || State == FullyOpened || passLocked)
-            return;
-
-        bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
-
         UnblockTaskWithSemaphore(xPassengerButtonDownSemaphore);
 
         break;
 
 
     case PassengerBtnUpPin :
-
-        if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
-            return;
-
-        if( State == CentManualClosing || State == CentManualOpening || State == FullyClosed || passLocked)
-            return;
-
-        bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
         UnblockTaskWithSemaphore(xPassengerButtonUpSemaphore);
 
@@ -172,12 +139,8 @@ void onPortEInt(void) {
 				
 				
     case JamPin :
-
-        if(!bCentralBtnDebounceReady)
-            return;
-        bCentralBtnDebounceReady = false;
-
-        UnblockTaskWithSemaphore(xJamSemaphore);
+		
+				
 
         break;
 
@@ -223,11 +186,11 @@ ButtonsInit(void) {
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
 
 
-    //enable limit switches
-    GPIOPinTypeGPIOInput(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
+    //enable limit switches AS PF0 PF4
+    //GPIOPinTypeGPIOInput(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
     //GPIOPadConfigSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
     GPIOIntDisable(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
-    GPIOIntTypeSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_BOTH_EDGES);
+    GPIOIntTypeSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_FALLING_EDGE);
     GPIOIntEnable(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
     GPIOIntRegister(Limits_GPIO_PORT_BASE, onLimitSwitchesInt);
     ////////////////////////////////////////////////////////////////////
@@ -277,7 +240,6 @@ ButtonsInit(void) {
     GPIOIntTypeSet(Lock_GPIO_PORT_BASE, LockSwitchPin , GPIO_BOTH_EDGES);
     GPIOIntTypeSet(Lock_GPIO_PORT_BASE, JamPin , GPIO_FALLING_EDGE);
     GPIOIntEnable(Lock_GPIO_PORT_BASE, LockSwitchPin | JamPin);
-    passLocked = false;
 
     GPIOIntRegister(GPIO_PORTE_BASE, onPortEInt);	//For lock switch + Jam pin + engine start switch
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

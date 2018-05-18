@@ -68,3 +68,11 @@ extern enum STATE State;
 
 
 
+extern xSemaphoreHandle xCentralButtonUpSemaphore;
+extern xSemaphoreHandle xCentralButtonDownSemaphore;
+extern xSemaphoreHandle xEngineStartButtonPressedSemaphore;
+extern xSemaphoreHandle xPassengLockSemaphore;
+extern xSemaphoreHandle xJamSemaphore;
+extern xSemaphoreHandle xWindowFullUpSemaphore;
+extern xSemaphoreHandle xWindowFullDownSemaphore;
+

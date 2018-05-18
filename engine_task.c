@@ -36,6 +36,7 @@ xSemaphoreHandle xEngineStartButtonPressedSemaphore;
 //From buttons.c //////////////////////
 extern bool bEngineStartDebounceReady;
 ///////////////////////////////////////
+extern void Force_Window_Up(void);
 
 
 void
@@ -52,6 +53,7 @@ EngineOff(void)
     bEngineStarted = false;
     LCD_print_string("ENGINE OFF");
     UARTprintf("ENGINE OFF\n");
+		Force_Window_Up();
 }
 
 void
@@ -93,7 +95,7 @@ EngineTaskInit(void) {
 
     CheckEngineSwitch();
 
-    Delay_ms(1000);
+    Delay_ms(500);
 
     CheckLockSwitch();
 

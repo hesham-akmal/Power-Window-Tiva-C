@@ -34,7 +34,39 @@ xSemaphoreHandle xPassengerButtonUpSemaphore;
 xSemaphoreHandle xPassengerButtonDownSemaphore;
 
 xSemaphoreHandle xPassengLockSemaphore;
-xSemaphoreHandle xJamSemaphore;
+
+xSemaphoreHandle xWindowFullUpSemaphore;
+xSemaphoreHandle xWindowFullDownSemaphore;
+
+
+void PrintCurrState(void)
+{
+
+	if(State == CentManualOpening)
+		UARTprintf("STATE: CentManualOpening \n");
+	else if(State == CentManualClosing)
+		UARTprintf("STATE: CentManualClosing \n");
+	else if(State == PassManualOpening)
+		UARTprintf("STATE: PassManualOpening \n");
+	else if(State == PassManualClosing)
+		UARTprintf("STATE: PassManualClosing \n");
+	else if(State == CentAutoOpening)
+		UARTprintf("STATE: CentAutoOpening \n");
+	else if(State == CentAutoClosing)
+		UARTprintf("STATE: CentAutoClosing \n");
+	else if(State == PassAutoOpening)
+		UARTprintf("STATE: PassAutoOpening \n");
+	else if(State == PassAutoClosing)
+		UARTprintf("STATE: PassAutoClosing \n");
+	else if(State == FullyClosed)
+		UARTprintf("STATE: FullyClosed \n");
+	else if(State == FullyOpened)
+		UARTprintf("STATE: FullyOpened \n");
+	else if(State == Neutral)
+		UARTprintf("STATE: Neutral \n");
+	else
+		UARTprintf("STATE: NULL \n");
+}
 
 void RedLEDOn(void) {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
@@ -59,7 +91,7 @@ void Force_Window_Stop(void) {
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2, 0);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void
@@ -92,6 +124,7 @@ CheckLockSwitch(void)
     }
 }
 
+////////
 
 void
 LockSwitchTask (void * pvParameters) {
@@ -111,68 +144,79 @@ LockSwitchTask (void * pvParameters) {
         Delay_ms(50);
 
         CheckLockSwitch();
+				
+        Delay_ms(50);
+				
+				bCentralBtnDebounceReady = true;
     }
 
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-
-void
-JamTask (void * pvParameters) {
-
-    xSemaphoreTake(xJamSemaphore, 0);
-
-    while(1) {
-
-        xSemaphoreTake(xJamSemaphore, portMAX_DELAY);
-
-        if(!bEngineStarted)
-        {
-            bCentralBtnDebounceReady = true;
-            continue; //BLOCK AGAIN //AVOID USING RETURN
-        }
-
-
-        ////////////////////////
-				///////JAM FUNCTION HERE
-				
-				
-				UARTprintf("Jam CLICKED\n");
-				
-				
-				
-				////////////////////////
-				
-
-        Delay_ms(300);
-
-        bCentralBtnDebounceReady = true;
-    }
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-void LimitSwitchUp(void) {
+void LimitSwitchTop(void) {
     State = FullyClosed;
-    UARTprintf("Fully Closed Window..\n");
     Force_Window_Stop();
+    UARTprintf("Fully Closed Window..\n");
     LCD_print_string("Window closed..");
 }
 
-void LimitSwitchDown(void) {
+void LimitSwitchBottom(void) {
     State = FullyOpened;
-    UARTprintf("Fully Opened Window..\n");
     Force_Window_Stop();
+    UARTprintf("Fully Opened Window..\n");
     LCD_print_string("Window opened..");
 }
 
-//////////////////////////////////////
+///
+
+void
+xWindowFullDownTask (void * pvParameters) {
+
+   xSemaphoreTake(xWindowFullDownSemaphore, 0);
+
+    while(1) {
+
+        xSemaphoreTake(xWindowFullDownSemaphore, portMAX_DELAY);
+
+        LimitSwitchBottom();
+						
+        Delay_ms(300);
+
+        bCentralBtnDebounceReady = true;
+						
+						}
+
+}
+
+void
+xWindowFullUpTask (void * pvParameters) {
+
+ xSemaphoreTake(xWindowFullUpSemaphore, 0);
+
+    while(1) {
+
+        xSemaphoreTake(xWindowFullUpSemaphore, portMAX_DELAY);
+
+        LimitSwitchTop();
+				
+        Delay_ms(300);
+
+        bCentralBtnDebounceReady = true;
+						
+						}
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void CentralBtnUpPress(void) {
+
+		if(State == FullyClosed)
+        {
+           UARTprintf("Already Full Closed");
+           return;
+        }
+
     State = CentManualClosing;
     UARTprintf("Central: Window closing..\n");
     Force_Window_Up();
@@ -180,6 +224,25 @@ void CentralBtnUpPress(void) {
 }
 
 void PassengerBtnUpPress(void) {
+
+		if(passLocked)
+		{
+						UARTprintf("PASSENGER LOCKED");
+            return;
+		}
+		
+		if(State == FullyClosed)
+        {
+           UARTprintf("Already Full Closed");
+           return;
+        }
+				
+		if(State == CentManualOpening || State == CentManualClosing )
+        {
+           UARTprintf("Central Has More Priority");
+           return;
+					 }
+				
     State = PassManualClosing;
     UARTprintf("Passenger: Window closing..\n");
     Force_Window_Up();
@@ -189,6 +252,13 @@ void PassengerBtnUpPress(void) {
 /////////////////////////////////////
 
 void CentralBtnDownPress(void) {
+
+		if(State == FullyOpened)
+        {
+           UARTprintf("Already Full Opened");
+           return;
+        }
+				
     State = CentManualOpening;
     UARTprintf("Central: Window opening..\n");
     Force_Window_Down();
@@ -196,6 +266,25 @@ void CentralBtnDownPress(void) {
 }
 
 void PassengerBtnDownPress(void) {
+
+		if(passLocked)
+		{
+						UARTprintf("PASSENGER LOCKED");
+            return;
+		}
+
+		if(State == FullyOpened)
+        {
+           UARTprintf("Already Full Opened");
+           return;
+        }
+				
+		if(State == CentManualOpening || State == CentManualClosing )
+        {
+           UARTprintf("Central Has More Priority");
+           return;
+        }
+		
     State = PassManualOpening;
     UARTprintf("Passenger: Window opening..\n");
     Force_Window_Down();
@@ -204,7 +293,27 @@ void PassengerBtnDownPress(void) {
 
 /////////////////////////////////////
 
-void PowerBtnRelease(void) { //for central/passenger up/down
+void CentBtnRelease(void) {
+				
+		if( State == FullyClosed || State == FullyOpened ) //To not overwrite these states
+			return;
+
+    State = Neutral;
+    UARTprintf("Window neutral\n");
+    Force_Window_Stop();
+    LCD_print_string("Window neutral");
+}
+
+void PassBtnRelease(void) {
+				
+		if( State == FullyClosed || State == FullyOpened ) //To not overwrite these states
+			return;
+			
+		if(State == CentManualOpening || State == CentManualClosing )
+        {
+           return;
+        }
+
     State = Neutral;
     UARTprintf("Window neutral\n");
     Force_Window_Stop();
@@ -254,13 +363,13 @@ CentManualUpTask (void * pvParameters) {
             bCentralBtnDebounceReady = true;
             continue; //BLOCK AGAIN //AVOID USING RETURN
         }
-
+				
         if (!centralBtnUpPressed)
         {
             CentralBtnUpPress();
         } else
         {
-            PowerBtnRelease();
+            CentBtnRelease();
         }
 
         centralBtnUpPressed = !centralBtnUpPressed;
@@ -299,7 +408,7 @@ CentManualDownTask (void * pvParameters) {
             CentralBtnDownPress();
         } else
         {
-            PowerBtnRelease();
+            CentBtnRelease();
         }
 
         centralBtnDownPressed = !centralBtnDownPressed;
@@ -341,7 +450,7 @@ PassManualUpTask (void * pvParameters) {
             PassengerBtnUpPress();
         } else
         {
-            PowerBtnRelease();
+            PassBtnRelease();
         }
 
         passengerBtnUpPressed = !passengerBtnUpPressed;
@@ -380,7 +489,7 @@ PassManualDownTask (void * pvParameters) {
             PassengerBtnDownPress();
         } else
         {
-            PowerBtnRelease();
+            PassBtnRelease();
         }
 
         passengerBtnDownPressed = !passengerBtnDownPressed;
@@ -398,7 +507,7 @@ PassManualDownTask (void * pvParameters) {
     }
 }
 
-//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
 semaphoresInit(void) {
@@ -415,8 +524,8 @@ semaphoresInit(void) {
 
     xPassengLockSemaphore = xSemaphoreCreateMutex();
 		
-		xJamSemaphore  = xSemaphoreCreateMutex();
-
+		xWindowFullUpSemaphore  = xSemaphoreCreateMutex();
+    xWindowFullDownSemaphore  = xSemaphoreCreateMutex();
 }
 
 uint32_t
@@ -425,14 +534,14 @@ statesTasksInit(void) {
     if (xTaskCreate(PassManualUpTask, (const portCHAR * )
                     "Pass Manual Up",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    3, NULL) != pdTRUE) {
+                    5, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
     }
 
     if (xTaskCreate(PassManualDownTask, (const portCHAR * )
                     "Pass Manual Down",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    3, NULL) != pdTRUE) {
+                    5, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
     }
 
@@ -440,7 +549,7 @@ statesTasksInit(void) {
     if (xTaskCreate(CentManualUpTask, (const portCHAR * )
                     "Cent Manual Up",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    4, NULL) != pdTRUE) {
+                    5, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
 
     }
@@ -448,7 +557,7 @@ statesTasksInit(void) {
     if (xTaskCreate(CentManualDownTask, (const portCHAR * )
                     "Cent Manual Down",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    4, NULL) != pdTRUE) {
+                    5, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
     }
 
@@ -458,21 +567,20 @@ statesTasksInit(void) {
                     5, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
     }
-
- if (xTaskCreate(JamTask, (const portCHAR * )
-                    "JamTask",
+		
+		 if (xTaskCreate(xWindowFullDownTask, (const portCHAR * )
+                    "xWindowFullDownTask",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-                    6, NULL) != pdTRUE) {
+                    5, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
     }
 		
-    /*
-    if (xTaskCreate(EmergencyTask, (const portCHAR * )
-          "Emergency",
-          SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
-          7, NULL) != pdTRUE) {
-    return (1);
-    }*/
+		 if (xTaskCreate(xWindowFullUpTask, (const portCHAR * )
+                    "xWindowFullDownTask",
+                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
+                    5, NULL) != pdTRUE) {
+        return (1);//failed to TaskCreate
+    }
 
     State = Neutral;
 
