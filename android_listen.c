@@ -33,7 +33,7 @@ bool androidINT;
 
 Android commands characters:
 
-a: android connected 
+a: android connected
 c: close window pressed/release
 d: open window pressed/release
 

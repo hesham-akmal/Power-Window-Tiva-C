@@ -56,14 +56,33 @@ void LCD_data(unsigned char data)
 }
 
 void LCD_INIT(void) {
-    ////////////////////////////////////////////////////////////////////////
+
+
     //Enable Clocks for LCD ctrl and LCD data
     ROM_SysCtlPeripheralEnable(LCD_ctrl_SYSCTL_PERIPH_GPIO | LCD_data_SYSCTL_PERIPH_GPIO);
+
+
+    ////////////////////////////////////////////////////////////////////////
     //Output init for LCD_ctrl
     GPIOPinTypeGPIOOutput(LCD_ctrl_GPIO_PORT_BASE, LCD_ctrl_pin1 | LCD_ctrl_pin2 | LCD_ctrl_pin3 );
     //Output init for LCD_data
     GPIOPinTypeGPIOOutput(LCD_data_GPIO_PORT_BASE, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 );
     ////////////////////////////////////////////////////////////////////////
+
+
+    //DO NOT USE BELOW CODE
+    /* GPIO_PORTB_DIR_R |= 0xFF;
+     GPIO_PORTA_DIR_R |= LCD_ctrl_pin1 | LCD_ctrl_pin2 | LCD_ctrl_pin3;
+
+    GPIO_PORTB_DEN_R |= 0xFF;
+     GPIO_PORTA_DEN_R |= LCD_ctrl_pin1 | LCD_ctrl_pin2 | LCD_ctrl_pin3;
+
+     GPIO_PORTB_AMSEL_R &= ~0xFF;
+     GPIO_PORTA_AMSEL_R &= ~LCD_ctrl_pin1 | LCD_ctrl_pin2 | LCD_ctrl_pin3;
+
+     GPIO_PORTB_AFSEL_R &= 0x00;
+     //GPIO_PORTA_AFSEL_R &= ( LCD_ctrl_pin1 | LCD_ctrl_pin2 | LCD_ctrl_pin3 ) & 0x00;*/
+
 
     // Wake Up LCD Sequence
     Delay_ms(20);            /* initialization sequence */// Wait >15 ms after power is applied

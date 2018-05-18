@@ -33,6 +33,8 @@ xSemaphoreHandle xCentralButtonDownSemaphore;
 xSemaphoreHandle xPassengerButtonUpSemaphore;
 xSemaphoreHandle xPassengerButtonDownSemaphore;
 
+xSemaphoreHandle xPassengLockSemaphore;
+
 void RedLEDOn(void) {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
 }
@@ -56,27 +58,75 @@ void Force_Window_Stop(void) {
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2, 0);
 }
 
-void LockSwitch(void){
+/////////////////////////////////////////////////////////////////////////////////////////////
 
-	UARTprintf("Passenger Buttons locked..\n");
-  Force_Window_Stop();
-  LCD_print_string("Passenger Buttons locked..");
-	
+
+void
+CheckLockSwitch(void)
+{
+    if( GPIOPinRead(Lock_GPIO_PORT_BASE,LockSwitchPin) != 0) //Reads switch on/off, in case switch already was on/off during the tiva booting up
+    {
+
+        passLocked = false;
+        UARTprintf("Passenger Buttons Unlocked\n");
+        LCD_print_string("Passeng Unlock");
+
+    }
+    else
+    {
+        passLocked = true;
+        UARTprintf("Passenger Buttons Locked\n");
+        LCD_print_string("Passeng Locked");
+
+        if (State == PassManualOpening || State == PassManualClosing
+                || State == PassAutoOpening || State == PassAutoClosing)
+        {
+            Force_Window_Stop();
+        }
+    }
 }
 
 
-void LimitSwitchUp(void){
-	State = FullyClosed;
-	UARTprintf("Fully Closed Window..\n");
-  Force_Window_Stop();
-  LCD_print_string("Window closed..");
+void
+LockSwitchTask (void * pvParameters) {
+
+    xSemaphoreTake(xPassengLockSemaphore, 0);
+
+    while(1) {
+
+        xSemaphoreTake(xPassengLockSemaphore, portMAX_DELAY);
+
+        if(!bEngineStarted)
+        {
+            bCentralBtnDebounceReady = true;
+            continue; //BLOCK AGAIN //AVOID USING RETURN
+        }
+
+        Delay_ms(50);
+
+        CheckLockSwitch();
+
+        Delay_ms(150);
+
+        bCentralBtnDebounceReady = true;
+    }
+
 }
 
-void LimitSwitchDown(void){
-	State = FullyOpened;
-	UARTprintf("Fully Opened Window..\n");
-  Force_Window_Stop();
-  LCD_print_string("Window opened..");
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+void LimitSwitchUp(void) {
+    State = FullyClosed;
+    UARTprintf("Fully Closed Window..\n");
+    Force_Window_Stop();
+    LCD_print_string("Window closed..");
+}
+
+void LimitSwitchDown(void) {
+    State = FullyOpened;
+    UARTprintf("Fully Opened Window..\n");
+    Force_Window_Stop();
+    LCD_print_string("Window opened..");
 }
 
 //////////////////////////////////////////////////////////
@@ -122,15 +172,28 @@ void PowerBtnRelease(void) { //for central/passenger up/down
 
 //////////////////////////////////////////////////////////
 
-void AutoOpen(void) {
-    State = AutoOpening;
-    UARTprintf("AUTO open window\n");
+void CentAutoOpen(void) {
+    State = CentAutoOpening;
+    UARTprintf("Central AUTO open window\n");
     LCD_print_string("AUTO open window");
 }
 
-void AutoClose(void) {
-    State = AutoClosing;
-    UARTprintf("AUTO close window\n");
+void CentAutoClose(void) {
+    State = CentAutoClosing;
+    UARTprintf("Central AUTO open window\n");
+    LCD_print_string("AUTO open window");
+}
+
+
+void PassAutoOpen(void) {
+    State = PassAutoOpening;
+    UARTprintf("Passenger AUTO open window\n");
+    LCD_print_string("AUTO open window");
+}
+
+void PassAutoClose(void) {
+    State = PassAutoClosing;
+    UARTprintf("Passenger AUTO close window\n");
     LCD_print_string("AUTO close window");
 }
 
@@ -167,7 +230,7 @@ CentManualUpTask (void * pvParameters) {
                 State == CentManualClosing && //If current state is central manual closing
                 GPIOPinRead(PowerBTNS_GPIO_PORT_BASE,CentralBtnUpPin) == 0) //Read if BtnUp is not pressed anymore, therefore released quickly in 300ms
         {
-            AutoClose();
+            CentAutoClose();
         }
 
         bCentralBtnDebounceReady = true;
@@ -206,7 +269,7 @@ CentManualDownTask (void * pvParameters) {
                 State == CentManualOpening &&
                 GPIOPinRead(PowerBTNS_GPIO_PORT_BASE,CentralBtnDownPin) == 0) //Read if BtnDown not pressed anymore
         {
-            AutoOpen();
+            CentAutoOpen();
         }
 
         bCentralBtnDebounceReady = true;
@@ -248,7 +311,7 @@ PassManualUpTask (void * pvParameters) {
                 State == PassManualClosing &&
                 GPIOPinRead(PowerBTNS_GPIO_PORT_BASE,PassengerBtnUpPin) == 0) //Read if BtnDown not pressed anymore
         {
-            AutoClose();
+            PassAutoClose();
         }
 
         bCentralBtnDebounceReady = true;
@@ -287,7 +350,7 @@ PassManualDownTask (void * pvParameters) {
                 State == PassManualOpening &&
                 GPIOPinRead(PowerBTNS_GPIO_PORT_BASE,PassengerBtnDownPin) == 0) //Read if BtnDown not pressed anymore
         {
-            AutoOpen();
+            PassAutoOpen();
         }
 
         bCentralBtnDebounceReady = true;
@@ -308,26 +371,28 @@ semaphoresInit(void) {
     xPassengerButtonDownSemaphore = xSemaphoreCreateMutex();
     passengerBtnUpPressed = false;
     passengerBtnDownPressed = false;
-		
+
+    xPassengLockSemaphore = xSemaphoreCreateMutex();
+
 }
 
 uint32_t
 statesTasksInit(void) {
 
-    	if (xTaskCreate(PassManualUpTask, (const portCHAR * )
+    if (xTaskCreate(PassManualUpTask, (const portCHAR * )
                     "Pass Manual Up",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
                     3, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
     }
 
-    	if (xTaskCreate(PassManualDownTask, (const portCHAR * )
+    if (xTaskCreate(PassManualDownTask, (const portCHAR * )
                     "Pass Manual Down",
                     SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
                     3, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
     }
-    	
+
 
     if (xTaskCreate(CentManualUpTask, (const portCHAR * )
                     "Cent Manual Up",
@@ -343,7 +408,15 @@ statesTasksInit(void) {
                     4, NULL) != pdTRUE) {
         return (1);//failed to TaskCreate
     }
-		
+
+    if (xTaskCreate(LockSwitchTask, (const portCHAR * )
+                    "LockSwitchTask",
+                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
+                    5, NULL) != pdTRUE) {
+        return (1);//failed to TaskCreate
+    }
+
+
     /*
     if (xTaskCreate(EmergencyTask, (const portCHAR * )
           "Emergency",
@@ -353,6 +426,10 @@ statesTasksInit(void) {
     }*/
 
     State = Neutral;
+
+    //Delay_ms(1000);
+
+    //	CheckLockSwitch();
 
     ButtonsInit();
     semaphoresInit();

@@ -26,9 +26,10 @@
 extern xSemaphoreHandle xCentralButtonUpSemaphore;
 extern xSemaphoreHandle xCentralButtonDownSemaphore;
 extern xSemaphoreHandle xEngineStartButtonPressedSemaphore;
+extern xSemaphoreHandle xPassengLockSemaphore;
 
 bool bCentralBtnDebounceReady;
-bool passLocked; 
+bool passLocked;
 bool bEngineStarted;
 
 void UnblockTaskWithSemaphore(xSemaphoreHandle x)
@@ -38,39 +39,36 @@ void UnblockTaskWithSemaphore(xSemaphoreHandle x)
     portEND_SWITCHING_ISR(xHigherPTW);
 }
 
-void onLockSwitchInt(void){
-	
-	passLocked = !passLocked;
-	if (State == PassManualOpening || State == PassManualClosing){
-			LockSwitch();
-	}
-	
-}
+////////////////////////////////////////////////////////////////////////////
 
 void onLimitSwitchesInt(void) {
-	
-	//Get which pin interrupted
-	uint32_t INT_PIN_NUM_SWITCH = GPIOIntStatus(Limits_GPIO_PORT_BASE, false);
-	
-	GPIOIntClear(Limits_GPIO_PORT_BASE, INT_PIN_NUM_SWITCH); // Clear interrupt flag
-	
-	androidINT = false; //not android interrupt
-	
-		switch(INT_PIN_NUM_SWITCH)
+
+    //Get which pin interrupted
+    uint32_t INT_PIN_NUM_SWITCH = GPIOIntStatus(Limits_GPIO_PORT_BASE, false);
+
+    GPIOIntClear(Limits_GPIO_PORT_BASE, INT_PIN_NUM_SWITCH); // Clear interrupt flag
+
+    androidINT = false; //not android interrupt
+
+    switch(INT_PIN_NUM_SWITCH)
     {
-				case WindowUpLimitPin:
-					if (State == FullyClosed)
-						State = Neutral;
-					else
-						LimitSwitchUp();
-					
-				case WindowDownLimitPin:
-					if (State == FullyOpened)
-						State = Neutral;
-					else
-						LimitSwitchDown();
-		}
-	
+    case WindowUpLimitPin:
+        if (State == FullyClosed)
+            State = Neutral;
+        else
+            LimitSwitchUp();
+
+        break;
+
+    case WindowDownLimitPin:
+        if (State == FullyOpened)
+            State = Neutral;
+        else
+            LimitSwitchDown();
+
+        break;
+    }
+
 }
 
 
@@ -81,7 +79,7 @@ void onPowerBTNSPortInt(void) {
 
     GPIOIntClear(PowerBTNS_GPIO_PORT_BASE, INT_PIN_NUM); // Clear interrupt flag
 
-		androidINT = false; //not android interrupt
+    androidINT = false; //not android interrupt
 
     switch(INT_PIN_NUM)
     {
@@ -90,9 +88,9 @@ void onPowerBTNSPortInt(void) {
 
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
-				
-				if (State == FullyOpened)
-					return;
+
+        if (State == FullyOpened)
+            return;
 
         bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
@@ -105,9 +103,9 @@ void onPowerBTNSPortInt(void) {
 
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
-				
-				if (State == FullyClosed)
-					return;
+
+        if (State == FullyClosed)
+            return;
 
         bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
@@ -121,7 +119,7 @@ void onPowerBTNSPortInt(void) {
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
 
-        if( State == CentManualClosing || State == CentManualOpening || State == FullyOpened || passLocked) 
+        if( State == CentManualClosing || State == CentManualOpening || State == FullyOpened || passLocked)
             return;
 
         bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
@@ -136,7 +134,7 @@ void onPowerBTNSPortInt(void) {
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
 
-        if( State == CentManualClosing || State == CentManualOpening || State == FullyClosed || passLocked) 
+        if( State == CentManualClosing || State == CentManualOpening || State == FullyClosed || passLocked)
             return;
 
         bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
@@ -162,6 +160,16 @@ void onPortEInt(void) {
     case EngineStartButton :
 
         UnblockTaskWithSemaphore(xEngineStartButtonPressedSemaphore);
+
+        break;
+
+    case LockSwitchPin :
+
+        if(!bCentralBtnDebounceReady)
+            return;
+        bCentralBtnDebounceReady = false;
+
+        UnblockTaskWithSemaphore(xPassengLockSemaphore);
 
         break;
 
@@ -205,24 +213,17 @@ ButtonsInit(void) {
 
     //enable led for testing
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
-		
-		
-		//enable limit switches 
-		ROM_SysCtlPeripheralEnable(Limits_SYSCTL_PERIPH_GPIO);                            
-    GPIOPinTypeGPIOInput(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin); 
+
+
+    //enable limit switches
+    ROM_SysCtlPeripheralEnable(Limits_SYSCTL_PERIPH_GPIO);
+    GPIOPinTypeGPIOInput(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
+    GPIOPadConfigSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
     GPIOIntDisable(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
     GPIOIntTypeSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_BOTH_EDGES);
     GPIOIntEnable(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
-		GPIOIntRegister(Limits_GPIO_PORT_BASE, onLimitSwitchesInt);
+    GPIOIntRegister(Limits_GPIO_PORT_BASE, onLimitSwitchesInt);
     ////////////////////////////////////////////////////////////////////
-		
-		//enable lock switch
-		ROM_SysCtlPeripheralEnable(Lock_SYSCTL_PERIPH_GPIO);                            
-    GPIOPinTypeGPIOInput(Lock_GPIO_PORT_BASE, LockSwitchPin); 
-    GPIOIntDisable(Lock_GPIO_PORT_BASE, LockSwitchPin);
-    GPIOIntTypeSet(Lock_GPIO_PORT_BASE, LockSwitchPin, GPIO_BOTH_EDGES);
-    GPIOIntEnable(Lock_GPIO_PORT_BASE, LockSwitchPin);
-		GPIOIntRegister(Lock_GPIO_PORT_BASE, onLockSwitchInt);
 
 
     //enable Central Buttons pins, CentralBTNS_GPIO_PORT_BASE and pin numbers are defined at PORTS.h ////////////////////////////////////
@@ -241,29 +242,38 @@ ButtonsInit(void) {
     GPIOIntTypeSet(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin, GPIO_BOTH_EDGES);
     GPIOIntEnable(PowerBTNS_GPIO_PORT_BASE, PassengerBtnDownPin | PassengerBtnUpPin);
     ////////////////////////////////////////////////////////////////////
-
     GPIOIntRegister(PowerBTNS_GPIO_PORT_BASE, onPowerBTNSPortInt);	//Link the method that is going to be called on the interrupt
 
     bCentralBtnDebounceReady = true;
-		passLocked = false;
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
 
+    //PORT E ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     //Motor INIT ////////////////////////////////////////////////////////////////////////////////////////////
-    ROM_SysCtlPeripheralEnable(Motor_SYSCTL_PERIPH_GPIO);
     GPIOPinTypeGPIOOutput(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2);
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2 , 0);
 
     //Engine INIT ///////////////////////////////////////////////////////////////////////////////////////////
     GPIOPinTypeGPIOInput(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
     //LINE BELOW ENSURE PULL UP, MUST BE CALLED AFTER GPIOPinTypeGPIOInput, ELSE IT WON'T WORK
-    //MUST BE DONE FOR SMALL SWITCHES AND LIMIT SWITCHES PROBABLY
     GPIOPadConfigSet(EngineStartButton_GPIO_PORT_BASE, EngineStartButton, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
     //INT INIT
     GPIOIntDisable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
     GPIOIntTypeSet(EngineStartButton_GPIO_PORT_BASE, EngineStartButton, GPIO_BOTH_EDGES );
     GPIOIntEnable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
-    GPIOIntRegister(EngineStartButton_GPIO_PORT_BASE, onPortEInt);	//Link the method that is going to be called on the interrupt
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Lock switch INIT
+    GPIOPinTypeGPIOInput(Lock_GPIO_PORT_BASE, LockSwitchPin);
+    //LINE BELOW ENSURES PULL UP, MUST BE CALLED AFTER GPIOPinTypeGPIOInput, ELSE IT WON'T WORK
+    GPIOPadConfigSet(Lock_GPIO_PORT_BASE, LockSwitchPin, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+    GPIOIntDisable(Lock_GPIO_PORT_BASE, LockSwitchPin);
+    GPIOIntTypeSet(Lock_GPIO_PORT_BASE, LockSwitchPin, GPIO_BOTH_EDGES);
+    GPIOIntEnable(Lock_GPIO_PORT_BASE, LockSwitchPin);
+    passLocked = false;
+
+    GPIOIntRegister(GPIO_PORTE_BASE, onPortEInt);	//For lock switch AND engine start switch
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 }
 

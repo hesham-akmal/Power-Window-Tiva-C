@@ -7,11 +7,7 @@
 #define PassengerBtnDownPin GPIO_PIN_6
 #define PassengerBtnUpPin GPIO_PIN_7
 
-//lock
-///////////////////////////
-#define Lock_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOD
-#define Lock_GPIO_PORT_BASE GPIO_PORTD_BASE
-#define LockSwitchPin GPIO_PIN_6
+
 
 //limit switches
 //////////////////////
@@ -31,12 +27,15 @@
 */
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////Motor Port and Pins
-# define Motor_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOE
 # define Motor_GPIO_PORT_BASE GPIO_PORTE_BASE
 # define MotorPinEN GPIO_PIN_1
 # define MotorPin1 GPIO_PIN_2
 # define MotorPin2 GPIO_PIN_3
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//lock
+# define Lock_GPIO_PORT_BASE GPIO_PORTE_BASE
+# define LockSwitchPin GPIO_PIN_4
+
 ///////////Engine Start Port
 # define EngineStartButton_GPIO_PORT_BASE GPIO_PORTE_BASE
 # define EngineStartButton GPIO_PIN_0
@@ -54,10 +53,16 @@ extern bool androidINT;
 uint32_t ListenTaskInit(void);
 ///////////////////////////////////////
 
-enum STATE{Neutral,
-					 CentManualOpening, CentManualClosing, 
-					 PassManualOpening, PassManualClosing, 
-					 AutoOpening, AutoClosing, FullyClosed, FullyOpened};
+extern bool passLocked;
+void CheckLockSwitch(void);
+
+enum STATE {Neutral,
+            CentManualOpening, CentManualClosing,
+            PassManualOpening, PassManualClosing,
+            CentAutoOpening, CentAutoClosing,
+            PassAutoOpening, PassAutoClosing,
+            FullyClosed, FullyOpened
+           };
 
 extern enum STATE State;
 
