@@ -28,6 +28,7 @@ extern xSemaphoreHandle xCentralButtonDownSemaphore;
 extern xSemaphoreHandle xEngineStartButtonPressedSemaphore;
 
 bool bCentralBtnDebounceReady;
+bool passLocked; 
 bool bEngineStarted;
 
 void UnblockTaskWithSemaphore(xSemaphoreHandle x)
@@ -36,6 +37,42 @@ void UnblockTaskWithSemaphore(xSemaphoreHandle x)
     xSemaphoreGiveFromISR(x, & xHigherPTW);
     portEND_SWITCHING_ISR(xHigherPTW);
 }
+
+void onLockSwitchInt(void){
+	
+	passLocked = !passLocked;
+	if (State == PassManualOpening || State == PassManualClosing){
+			LockSwitch();
+	}
+	
+}
+
+void onLimitSwitchesInt(void) {
+	
+	//Get which pin interrupted
+	uint32_t INT_PIN_NUM_SWITCH = GPIOIntStatus(Limits_GPIO_PORT_BASE, false);
+	
+	GPIOIntClear(Limits_GPIO_PORT_BASE, INT_PIN_NUM_SWITCH); // Clear interrupt flag
+	
+	androidINT = false; //not android interrupt
+	
+		switch(INT_PIN_NUM_SWITCH)
+    {
+				case WindowUpLimitPin:
+					if (State == FullyClosed)
+						State = Neutral;
+					else
+						LimitSwitchUp();
+					
+				case WindowDownLimitPin:
+					if (State == FullyOpened)
+						State = Neutral;
+					else
+						LimitSwitchDown();
+		}
+	
+}
+
 
 void onPowerBTNSPortInt(void) {
 
@@ -53,6 +90,9 @@ void onPowerBTNSPortInt(void) {
 
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
+				
+				if (State == FullyOpened)
+					return;
 
         bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
@@ -65,6 +105,9 @@ void onPowerBTNSPortInt(void) {
 
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
+				
+				if (State == FullyClosed)
+					return;
 
         bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
 
@@ -78,7 +121,7 @@ void onPowerBTNSPortInt(void) {
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
 
-        if( State == CentManualClosing || State == CentManualOpening ) //If Central is closing/opening
+        if( State == CentManualClosing || State == CentManualOpening || State == FullyOpened || passLocked) 
             return;
 
         bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
@@ -93,7 +136,7 @@ void onPowerBTNSPortInt(void) {
         if(!bCentralBtnDebounceReady) //for debouncing central button //If not ready to listen to button change, return.
             return;
 
-        if( State == CentManualClosing || State == CentManualOpening ) //If Central is closing/opening
+        if( State == CentManualClosing || State == CentManualOpening || State == FullyClosed || passLocked) 
             return;
 
         bCentralBtnDebounceReady = false; //If ready, set it to false, until it's set to true again.
@@ -162,6 +205,24 @@ ButtonsInit(void) {
 
     //enable led for testing
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
+		
+		
+		//enable limit switches 
+		ROM_SysCtlPeripheralEnable(Limits_SYSCTL_PERIPH_GPIO);                            
+    GPIOPinTypeGPIOInput(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin); 
+    GPIOIntDisable(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
+    GPIOIntTypeSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_BOTH_EDGES);
+    GPIOIntEnable(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
+		GPIOIntRegister(Limits_GPIO_PORT_BASE, onLimitSwitchesInt);
+    ////////////////////////////////////////////////////////////////////
+		
+		//enable lock switch
+		ROM_SysCtlPeripheralEnable(Lock_SYSCTL_PERIPH_GPIO);                            
+    GPIOPinTypeGPIOInput(Lock_GPIO_PORT_BASE, LockSwitchPin); 
+    GPIOIntDisable(Lock_GPIO_PORT_BASE, LockSwitchPin);
+    GPIOIntTypeSet(Lock_GPIO_PORT_BASE, LockSwitchPin, GPIO_BOTH_EDGES);
+    GPIOIntEnable(Lock_GPIO_PORT_BASE, LockSwitchPin);
+		GPIOIntRegister(Lock_GPIO_PORT_BASE, onLockSwitchInt);
 
 
     //enable Central Buttons pins, CentralBTNS_GPIO_PORT_BASE and pin numbers are defined at PORTS.h ////////////////////////////////////
@@ -184,6 +245,7 @@ ButtonsInit(void) {
     GPIOIntRegister(PowerBTNS_GPIO_PORT_BASE, onPowerBTNSPortInt);	//Link the method that is going to be called on the interrupt
 
     bCentralBtnDebounceReady = true;
+		passLocked = false;
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Motor INIT ////////////////////////////////////////////////////////////////////////////////////////////

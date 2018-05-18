@@ -6,6 +6,22 @@
 #define CentralBtnUpPin GPIO_PIN_5
 #define PassengerBtnDownPin GPIO_PIN_6
 #define PassengerBtnUpPin GPIO_PIN_7
+
+//lock
+///////////////////////////
+#define Lock_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOD
+#define Lock_GPIO_PORT_BASE GPIO_PORTD_BASE
+#define LockSwitchPin GPIO_PIN_6
+
+//limit switches
+//////////////////////
+#define Limits_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOA
+#define Limits_GPIO_PORT_BASE GPIO_PORTA_BASE
+#define WindowUpLimitPin GPIO_PIN_2
+#define WindowDownLimitPin GPIO_PIN_3
+#define WindowJamLimitPin GPIO_PIN_4
+
+
 //////////////////////
 /*
 //trying with PF0 and PF4 for Central Buttons
@@ -30,6 +46,7 @@ extern bool bEngineStarted;
 
 //From buttons.c //////////////////////
 extern bool bCentralBtnDebounceReady;
+extern bool passLocked;
 ///////////////////////////////////////
 
 //From android_listen.c ///////////////
@@ -40,7 +57,7 @@ uint32_t ListenTaskInit(void);
 enum STATE{Neutral,
 					 CentManualOpening, CentManualClosing, 
 					 PassManualOpening, PassManualClosing, 
-					 AutoOpening, AutoClosing	};
+					 AutoOpening, AutoClosing, FullyClosed, FullyOpened};
 
 extern enum STATE State;
 

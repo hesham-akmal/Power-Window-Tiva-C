@@ -56,6 +56,29 @@ void Force_Window_Stop(void) {
     GPIOPinWrite(Motor_GPIO_PORT_BASE, MotorPinEN | MotorPin1 | MotorPin2, 0);
 }
 
+void LockSwitch(void){
+
+	UARTprintf("Passenger Buttons locked..\n");
+  Force_Window_Stop();
+  LCD_print_string("Passenger Buttons locked..");
+	
+}
+
+
+void LimitSwitchUp(void){
+	State = FullyClosed;
+	UARTprintf("Fully Closed Window..\n");
+  Force_Window_Stop();
+  LCD_print_string("Window closed..");
+}
+
+void LimitSwitchDown(void){
+	State = FullyOpened;
+	UARTprintf("Fully Opened Window..\n");
+  Force_Window_Stop();
+  LCD_print_string("Window opened..");
+}
+
 //////////////////////////////////////////////////////////
 
 void CentralBtnUpPress(void) {
