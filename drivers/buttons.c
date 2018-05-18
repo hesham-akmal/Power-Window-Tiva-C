@@ -27,6 +27,7 @@ extern xSemaphoreHandle xCentralButtonUpSemaphore;
 extern xSemaphoreHandle xCentralButtonDownSemaphore;
 extern xSemaphoreHandle xEngineStartButtonPressedSemaphore;
 extern xSemaphoreHandle xPassengLockSemaphore;
+extern xSemaphoreHandle xJamSemaphore;
 
 bool bCentralBtnDebounceReady;
 bool passLocked;
@@ -163,13 +164,20 @@ void onPortEInt(void) {
 
         break;
 
-    case LockSwitchPin :
+    case LockSwitchPin : //In case of switch buttons, we don't need to use Debounce thing
+
+        UnblockTaskWithSemaphore(xPassengLockSemaphore);
+
+        break;
+				
+				
+    case JamPin :
 
         if(!bCentralBtnDebounceReady)
             return;
         bCentralBtnDebounceReady = false;
 
-        UnblockTaskWithSemaphore(xPassengLockSemaphore);
+        UnblockTaskWithSemaphore(xJamSemaphore);
 
         break;
 
@@ -216,9 +224,8 @@ ButtonsInit(void) {
 
 
     //enable limit switches
-    ROM_SysCtlPeripheralEnable(Limits_SYSCTL_PERIPH_GPIO);
     GPIOPinTypeGPIOInput(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
-    GPIOPadConfigSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+    //GPIOPadConfigSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
     GPIOIntDisable(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
     GPIOIntTypeSet(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin, GPIO_BOTH_EDGES);
     GPIOIntEnable(Limits_GPIO_PORT_BASE, WindowUpLimitPin | WindowDownLimitPin);
@@ -262,16 +269,17 @@ ButtonsInit(void) {
     GPIOIntTypeSet(EngineStartButton_GPIO_PORT_BASE, EngineStartButton, GPIO_BOTH_EDGES );
     GPIOIntEnable(EngineStartButton_GPIO_PORT_BASE, EngineStartButton);
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //Lock switch INIT
-    GPIOPinTypeGPIOInput(Lock_GPIO_PORT_BASE, LockSwitchPin);
+    //Lock switch and Jam switches INIT
+    GPIOPinTypeGPIOInput(Lock_GPIO_PORT_BASE, LockSwitchPin | JamPin);
     //LINE BELOW ENSURES PULL UP, MUST BE CALLED AFTER GPIOPinTypeGPIOInput, ELSE IT WON'T WORK
-    GPIOPadConfigSet(Lock_GPIO_PORT_BASE, LockSwitchPin, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
-    GPIOIntDisable(Lock_GPIO_PORT_BASE, LockSwitchPin);
-    GPIOIntTypeSet(Lock_GPIO_PORT_BASE, LockSwitchPin, GPIO_BOTH_EDGES);
-    GPIOIntEnable(Lock_GPIO_PORT_BASE, LockSwitchPin);
+    GPIOPadConfigSet(Lock_GPIO_PORT_BASE, LockSwitchPin | JamPin, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+    GPIOIntDisable(Lock_GPIO_PORT_BASE, LockSwitchPin | JamPin);
+    GPIOIntTypeSet(Lock_GPIO_PORT_BASE, LockSwitchPin , GPIO_BOTH_EDGES);
+    GPIOIntTypeSet(Lock_GPIO_PORT_BASE, JamPin , GPIO_FALLING_EDGE);
+    GPIOIntEnable(Lock_GPIO_PORT_BASE, LockSwitchPin | JamPin);
     passLocked = false;
 
-    GPIOIntRegister(GPIO_PORTE_BASE, onPortEInt);	//For lock switch AND engine start switch
+    GPIOIntRegister(GPIO_PORTE_BASE, onPortEInt);	//For lock switch + Jam pin + engine start switch
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

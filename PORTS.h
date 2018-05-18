@@ -11,11 +11,10 @@
 
 //limit switches
 //////////////////////
-#define Limits_SYSCTL_PERIPH_GPIO SYSCTL_PERIPH_GPIOA
-#define Limits_GPIO_PORT_BASE GPIO_PORTA_BASE
-#define WindowUpLimitPin GPIO_PIN_2
-#define WindowDownLimitPin GPIO_PIN_3
-#define WindowJamLimitPin GPIO_PIN_4
+#define Limits_GPIO_PORT_BASE GPIO_PORTF_BASE
+#define WindowUpLimitPin GPIO_PIN_0
+#define WindowDownLimitPin GPIO_PIN_4
+
 
 
 //////////////////////
@@ -32,9 +31,10 @@
 # define MotorPin1 GPIO_PIN_2
 # define MotorPin2 GPIO_PIN_3
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//lock
+//lock  and Jam
 # define Lock_GPIO_PORT_BASE GPIO_PORTE_BASE
 # define LockSwitchPin GPIO_PIN_4
+# define JamPin GPIO_PIN_5
 
 ///////////Engine Start Port
 # define EngineStartButton_GPIO_PORT_BASE GPIO_PORTE_BASE

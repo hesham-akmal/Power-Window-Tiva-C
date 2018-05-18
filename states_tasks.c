@@ -34,6 +34,7 @@ xSemaphoreHandle xPassengerButtonUpSemaphore;
 xSemaphoreHandle xPassengerButtonDownSemaphore;
 
 xSemaphoreHandle xPassengLockSemaphore;
+xSemaphoreHandle xJamSemaphore;
 
 void RedLEDOn(void) {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 2);
@@ -66,6 +67,8 @@ CheckLockSwitch(void)
 {
     if( GPIOPinRead(Lock_GPIO_PORT_BASE,LockSwitchPin) != 0) //Reads switch on/off, in case switch already was on/off during the tiva booting up
     {
+				if(passLocked == false)
+					return; //already false, multiple interrupt, return
 
         passLocked = false;
         UARTprintf("Passenger Buttons Unlocked\n");
@@ -74,6 +77,9 @@ CheckLockSwitch(void)
     }
     else
     {
+				if(passLocked == true)
+					return; //already true, multiple interrupt, return
+					
         passLocked = true;
         UARTprintf("Passenger Buttons Locked\n");
         LCD_print_string("Passeng Locked");
@@ -105,8 +111,41 @@ LockSwitchTask (void * pvParameters) {
         Delay_ms(50);
 
         CheckLockSwitch();
+    }
 
-        Delay_ms(150);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void
+JamTask (void * pvParameters) {
+
+    xSemaphoreTake(xJamSemaphore, 0);
+
+    while(1) {
+
+        xSemaphoreTake(xJamSemaphore, portMAX_DELAY);
+
+        if(!bEngineStarted)
+        {
+            bCentralBtnDebounceReady = true;
+            continue; //BLOCK AGAIN //AVOID USING RETURN
+        }
+
+
+        ////////////////////////
+				///////JAM FUNCTION HERE
+				
+				
+				UARTprintf("Jam CLICKED\n");
+				
+				
+				
+				////////////////////////
+				
+
+        Delay_ms(300);
 
         bCentralBtnDebounceReady = true;
     }
@@ -114,6 +153,8 @@ LockSwitchTask (void * pvParameters) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 void LimitSwitchUp(void) {
     State = FullyClosed;
@@ -129,7 +170,7 @@ void LimitSwitchDown(void) {
     LCD_print_string("Window opened..");
 }
 
-//////////////////////////////////////////////////////////
+//////////////////////////////////////
 
 void CentralBtnUpPress(void) {
     State = CentManualClosing;
@@ -145,7 +186,7 @@ void PassengerBtnUpPress(void) {
     LCD_print_string("Window closing..");
 }
 
-//////////////////////////////////////////////////////////
+/////////////////////////////////////
 
 void CentralBtnDownPress(void) {
     State = CentManualOpening;
@@ -161,7 +202,7 @@ void PassengerBtnDownPress(void) {
     LCD_print_string("Window opening..");
 }
 
-//////////////////////////////////////////////////////////
+/////////////////////////////////////
 
 void PowerBtnRelease(void) { //for central/passenger up/down
     State = Neutral;
@@ -170,7 +211,7 @@ void PowerBtnRelease(void) { //for central/passenger up/down
     LCD_print_string("Window neutral");
 }
 
-//////////////////////////////////////////////////////////
+/////////////////////////////////////
 
 void CentAutoOpen(void) {
     State = CentAutoOpening;
@@ -197,7 +238,7 @@ void PassAutoClose(void) {
     LCD_print_string("AUTO close window");
 }
 
-//////////////////////////////////////////////////////////
+//////////////////////////////////
 
 void
 CentManualUpTask (void * pvParameters) {
@@ -373,6 +414,8 @@ semaphoresInit(void) {
     passengerBtnDownPressed = false;
 
     xPassengLockSemaphore = xSemaphoreCreateMutex();
+		
+		xJamSemaphore  = xSemaphoreCreateMutex();
 
 }
 
@@ -416,7 +459,13 @@ statesTasksInit(void) {
         return (1);//failed to TaskCreate
     }
 
-
+ if (xTaskCreate(JamTask, (const portCHAR * )
+                    "JamTask",
+                    SWITCHTASKSTACKSIZE, NULL, tskIDLE_PRIORITY +
+                    6, NULL) != pdTRUE) {
+        return (1);//failed to TaskCreate
+    }
+		
     /*
     if (xTaskCreate(EmergencyTask, (const portCHAR * )
           "Emergency",
@@ -426,10 +475,6 @@ statesTasksInit(void) {
     }*/
 
     State = Neutral;
-
-    //Delay_ms(1000);
-
-    //	CheckLockSwitch();
 
     ButtonsInit();
     semaphoresInit();
